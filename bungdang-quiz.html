@@ -141,52 +141,53 @@ button{font-family:inherit;cursor:pointer;border:none}
 /* ================== 마스코트 (사용자 그림 캐릭터: 줄무늬 티셔츠 곰돌이 '두두') ================== */
 let _mid=0;
 function mascot(mood='normal', size=90){
-  const FUR='#f6b48a', LINE='#3b3340', BLUE='#3aaee6', id='dd'+(++_mid);
+  const FUR='#f8b88e', FUR2='#ffe0c8', LINE='#3b3340', BLUE='#3aaee6', id='dd'+(++_mid);
   const brows = {
-    normal:`<path d="M35 46 L43 43.5 M69 46 L61 43.5" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>`,
-    happy:`<path d="M35 44.5 L43 43 M69 44.5 L61 43" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>`,
-    sad:`<path d="M35 48 L43 43 M69 48 L61 43" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>`,
-    wow:`<path d="M35 42 L43 40.5 M69 42 L61 40.5" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>`
-  }[mood];
+    normal:`<path d="M36.5 47.5 L42 46 M67.5 47.5 L62 46"/>`,
+    happy:`<path d="M36.5 46 L42 45.5 M67.5 46 L62 45.5"/>`,
+    sad:`<path d="M36.5 49.5 L42 46 M67.5 49.5 L62 46"/>`,
+    wow:`<path d="M36.5 44 L42 43 M67.5 44 L62 43"/>`
+  }[mood].replace('/>',` stroke="${LINE}" stroke-width="2.2" stroke-linecap="round" fill="none"/>`);
+  const shine = (x,y,r)=>`<circle cx="${x+r*.35}" cy="${y-r*.4}" r="${r*.42}" fill="#fff"/><circle cx="${x-r*.4}" cy="${y+r*.4}" r="${r*.18}" fill="#fff"/>`;
   const eyes = {
-    normal:`<circle cx="41" cy="54" r="2.9" fill="${LINE}"/><circle cx="63" cy="54" r="2.9" fill="${LINE}"/>`,
-    happy:`<path d="M37.5 55 q3.5 -5 7 0 M59.5 55 q3.5 -5 7 0" stroke="${LINE}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`,
-    sad:`<circle cx="41" cy="55" r="2.7" fill="${LINE}"/><circle cx="63" cy="55" r="2.7" fill="${LINE}"/>
-      <path d="M66 59 q3 5 0 7.5 q-3 -2.5 0 -7.5z" fill="#7cc8f2"/>`,
-    wow:`<circle cx="41" cy="54" r="4.6" fill="${LINE}"/><circle cx="63" cy="54" r="4.6" fill="${LINE}"/>
-      <circle cx="42.6" cy="52.4" r="1.6" fill="#fff"/><circle cx="64.6" cy="52.4" r="1.6" fill="#fff"/>`
+    normal:`<ellipse cx="40" cy="56" rx="3.8" ry="4.4" fill="${LINE}"/><ellipse cx="64" cy="56" rx="3.8" ry="4.4" fill="${LINE}"/>${shine(40,56,3.8)}${shine(64,56,3.8)}`,
+    happy:`<path d="M35.5 57.5 q4.5 -6.5 9 0 M59.5 57.5 q4.5 -6.5 9 0" stroke="${LINE}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    sad:`<ellipse cx="40" cy="57" rx="3.6" ry="4" fill="${LINE}"/><ellipse cx="64" cy="57" rx="3.6" ry="4" fill="${LINE}"/>${shine(40,57,3.6)}${shine(64,57,3.6)}
+      <path d="M68 61 q3.2 5 0 8 q-3.2 -3 0 -8z" fill="#7cc8f2"/>`,
+    wow:`<ellipse cx="40" cy="56" rx="5" ry="5.6" fill="${LINE}"/><ellipse cx="64" cy="56" rx="5" ry="5.6" fill="${LINE}"/>
+      <path d="M41.8 51.5 l1 2.1 l2.1 1 l-2.1 1 l-1 2.1 l-1 -2.1 l-2.1 -1 l2.1 -1z M65.8 51.5 l1 2.1 l2.1 1 l-2.1 1 l-1 2.1 l-1 -2.1 l-2.1 -1 l2.1 -1z" fill="#fff"/>
+      <circle cx="38" cy="58.5" r="1" fill="#fff"/><circle cx="62" cy="58.5" r="1" fill="#fff"/>`
   }[mood];
   const mouth = {
-    normal:`<path d="M52 62.5 q-1 4.5 -5.5 4 M52 62.5 q1 4.5 5.5 4" stroke="${LINE}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-    happy:`<path d="M46.5 64.5 q5.5 8 11 0 z" fill="#e8576b" stroke="${LINE}" stroke-width="1.8" stroke-linejoin="round"/>`,
-    sad:`<path d="M47.5 68 q4.5 -4 9 0" stroke="${LINE}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-    wow:`<ellipse cx="52" cy="67" rx="3" ry="3.8" fill="#e8576b" stroke="${LINE}" stroke-width="1.6"/>`
+    normal:`<path d="M52 65 q-0.5 3.8 -4.5 3.4 M52 65 q0.5 3.8 4.5 3.4" stroke="${LINE}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    happy:`<path d="M47.5 66 q4.5 7.5 9 0 z" fill="#e8576b" stroke="${LINE}" stroke-width="1.8" stroke-linejoin="round"/><path d="M49.5 69.3 q2.5 1.6 5 0" fill="#ff9aa8"/>`,
+    sad:`<path d="M48.5 70 q3.5 -3 7 0" stroke="${LINE}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    wow:`<ellipse cx="52" cy="69" rx="2.6" ry="3.2" fill="#e8576b" stroke="${LINE}" stroke-width="1.6"/>`
   }[mood];
-  const blush = (mood==='happy'||mood==='wow') ? `<ellipse cx="33" cy="62" rx="5" ry="3" fill="#ff8f9e" opacity=".55"/><ellipse cx="71" cy="62" rx="5" ry="3" fill="#ff8f9e" opacity=".55"/>` : '';
   return `<svg width="${size}" height="${size}" viewBox="0 0 104 104" aria-hidden="true">
-    <defs><clipPath id="${id}"><path d="M33 98 Q31 80 52 78 Q73 80 71 98 Z"/></clipPath></defs>
-    <ellipse cx="52" cy="100" rx="24" ry="3.5" fill="#000" opacity=".08"/>
-    <!-- 팔 -->
-    <path d="M36 82 Q26 88 22 97 Q25 100 28 97 Q32 91 38 88 Z" fill="${FUR}" stroke="${LINE}" stroke-width="2.2" stroke-linejoin="round"/>
-    <path d="M68 82 Q78 88 82 97 Q79 100 76 97 Q72 91 66 88 Z" fill="${FUR}" stroke="${LINE}" stroke-width="2.2" stroke-linejoin="round"/>
+    <defs><clipPath id="${id}"><path d="M36 99 Q34 82 52 81 Q70 82 68 99 Z"/></clipPath></defs>
+    <ellipse cx="52" cy="100.5" rx="22" ry="3" fill="#000" opacity=".08"/>
+    <!-- 동글동글 팔 -->
+    <ellipse cx="33.5" cy="91" rx="5" ry="7" transform="rotate(35 33.5 91)" fill="${FUR}" stroke="${LINE}" stroke-width="2.2"/>
+    <ellipse cx="70.5" cy="91" rx="5" ry="7" transform="rotate(-35 70.5 91)" fill="${FUR}" stroke="${LINE}" stroke-width="2.2"/>
     <!-- 줄무늬 티셔츠 -->
-    <path d="M33 98 Q31 80 52 78 Q73 80 71 98 Z" fill="#fff"/>
-    <g clip-path="url(#${id})" fill="${BLUE}">
-      <rect x="20" y="79" width="64" height="4.5"/><rect x="20" y="87" width="64" height="4.5"/><rect x="20" y="95" width="64" height="4.5"/>
-    </g>
-    <path d="M33 98 Q31 80 52 78 Q73 80 71 98 Z" fill="none" stroke="${LINE}" stroke-width="2.2" stroke-linejoin="round"/>
-    <path d="M52 94 q-5 -3.5 -5 -6.5 q0 -2.5 2.5 -2.5 q1.8 0 2.5 1.8 q0.7 -1.8 2.5 -1.8 q2.5 0 2.5 2.5 q0 3 -5 6.5z" fill="#e23b4e"/>
+    <path d="M36 99 Q34 82 52 81 Q70 82 68 99 Z" fill="#fff"/>
+    <g clip-path="url(#${id})" fill="${BLUE}"><rect x="20" y="84" width="64" height="4"/><rect x="20" y="92" width="64" height="4"/></g>
+    <path d="M36 99 Q34 82 52 81 Q70 82 68 99 Z" fill="none" stroke="${LINE}" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M52 97 q-4.6 -3.2 -4.6 -6 q0 -2.3 2.3 -2.3 q1.6 0 2.3 1.6 q0.7 -1.6 2.3 -1.6 q2.3 0 2.3 2.3 q0 2.8 -4.6 6z" fill="#e23b4e"/>
     <!-- 귀 -->
-    <circle cx="29" cy="33" r="9" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/>
-    <circle cx="75" cy="33" r="9" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/>
-    <!-- 얼굴 -->
-    <path d="M24 55 Q23 32 52 31 Q81 32 80 55 Q79 79 52 79 Q25 79 24 55 Z" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/>
-    ${blush}
-    <!-- 주근깨 -->
-    <g fill="${LINE}"><circle cx="30" cy="60" r="1"/><circle cx="33" cy="63" r="1"/><circle cx="29" cy="65" r="1"/>
-      <circle cx="74" cy="60" r="1"/><circle cx="71" cy="63" r="1"/><circle cx="75" cy="65" r="1"/></g>
+    <circle cx="27" cy="30" r="10" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/><circle cx="27.5" cy="30.5" r="5" fill="#ffb3a7"/>
+    <circle cx="77" cy="30" r="10" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/><circle cx="76.5" cy="30.5" r="5" fill="#ffb3a7"/>
+    <!-- 말랑한 얼굴 -->
+    <path d="M20 57 Q19 30 52 29 Q85 30 84 57 Q83 83 52 83 Q21 83 20 57 Z" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/>
+    <ellipse cx="52" cy="66" rx="10" ry="7.5" fill="${FUR2}"/>
+    <!-- 볼터치 + 주근깨 -->
+    <ellipse cx="30" cy="66" rx="6" ry="3.6" fill="#ff8f9e" opacity="${mood==='sad'?'.3':'.55'}"/>
+    <ellipse cx="74" cy="66" rx="6" ry="3.6" fill="#ff8f9e" opacity="${mood==='sad'?'.3':'.55'}"/>
+    <g fill="#a0614a"><circle cx="27" cy="62" r=".9"/><circle cx="30" cy="61" r=".9"/><circle cx="33" cy="62" r=".9"/>
+      <circle cx="77" cy="62" r=".9"/><circle cx="74" cy="61" r=".9"/><circle cx="71" cy="62" r=".9"/></g>
     ${brows}${eyes}
-    <ellipse cx="52" cy="60.5" rx="3.2" ry="2.3" fill="${LINE}"/>
+    <ellipse cx="52" cy="62.8" rx="3.4" ry="2.4" fill="${LINE}"/><ellipse cx="51" cy="62" rx="1.1" ry=".6" fill="#fff" opacity=".7"/>
     ${mouth}
   </svg>`;
 }
