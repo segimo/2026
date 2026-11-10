@@ -59,6 +59,28 @@ body{overscroll-behavior-y:none}
 .tarrow{flex:none;font-family:'Jua';font-size:44px;color:#cbbfb3;padding-right:4px}
 .back{font-family:'Jua';font-size:18px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:6px 16px 6px 12px;color:var(--ink);box-shadow:0 3px 0 var(--line)}
 .back:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px 14px;padding:18px 18px 30px}
+.pc{aspect-ratio:3/4.5;perspective:1200px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.pc-in{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
+.pc.flip .pc-in{transform:rotateY(180deg)}
+.pc .side{position:absolute;inset:0;border-radius:22px;background:#fff;border:3px solid var(--c);box-shadow:0 6px 0 var(--cd);
+  overflow:hidden;display:flex;flex-direction:column;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.pc .back{transform:rotateY(180deg);padding:12px 12px 10px}
+.pc .pic{flex:none;height:54%;display:flex;align-items:flex-end;justify-content:center;background-color:var(--c);
+  background-image:radial-gradient(rgba(255,255,255,.25) 2px,transparent 2.2px);background-size:16px 16px}
+.pc .pic svg{height:92%;width:auto}
+.pc .info{padding:8px 10px 10px;text-align:center;flex:1;overflow:hidden}
+.pc .nm{font-family:'Jua';font-size:21px;line-height:1.1}
+.pc .party{display:inline-block;font-family:'Jua';font-size:12.5px;color:#fff;background:var(--cd);border-radius:999px;padding:2px 9px;margin:4px 0 3px}
+.pc .yr{font-size:11.5px;color:var(--muted)}
+.pc .one{font-size:12.5px;line-height:1.35;margin-top:4px}
+.pc .back .nm{font-size:18px;color:var(--cd);display:flex;align-items:center;gap:6px}
+.pc .back ul{margin:8px 0 0;padding:0 0 0 16px;font-size:12.5px;line-height:1.45;flex:1;overflow:auto}
+.pc .back li{margin-bottom:5px}
+.pc .back .hint{font-size:11px;color:#b9aea6;text-align:center}
+.pc .flipmark{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.9);border-radius:10px;font-size:13px;padding:2px 7px;font-family:'Jua';color:var(--cd)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 18px}
+.legend span{font-family:'Jua';font-size:13px;color:#fff;background:var(--c);border-radius:999px;padding:3px 10px}
 .course{margin:18px 18px 10px;background:#fff;border:2px solid var(--line);border-radius:28px;box-shadow:0 5px 0 var(--line);padding:18px 0 22px}
 .course-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 20px}
 .course-head h2{margin:0;font-size:21px}
@@ -185,6 +207,10 @@ body{overscroll-behavior-y:none}
   .mosaic{width:180px;height:180px;gap:9px}.mosaic i{border-radius:20px}
   .ttitle{font-size:36px}.tsub{font-size:17px}.tbar{height:16px}.tarrow{font-size:60px}
   .back{font-size:21px;padding:8px 20px 8px 14px}
+  .pgrid{grid-template-columns:repeat(3,1fr);gap:26px 22px;padding:24px 32px 40px}
+  .pc .nm{font-size:26px}.pc .party{font-size:15px}.pc .yr{font-size:14px}.pc .one{font-size:15px}
+  .pc .back{padding:16px 16px 12px}.pc .back .nm{font-size:23px}.pc .back ul{font-size:15.5px;padding-left:20px}.pc .back .hint{font-size:13px}
+  .legend span{font-size:15px;padding:4px 13px}
   .course{margin:18px 32px 10px;padding:24px 0 28px;border-radius:34px}
   .course-head{padding:0 28px}
   .course-head h2{font-size:26px}
@@ -237,6 +263,7 @@ body{overscroll-behavior-y:none}
 @media (min-width:1050px){
   .app{max-width:1080px}
   .stages{grid-template-columns:repeat(4,1fr)}
+  .pgrid{grid-template-columns:repeat(4,1fr)}
 }
 </style>
 </head>
@@ -355,6 +382,98 @@ const ICONS = {
     <path d="M50 12 q-4.5 -3 -4.5 -5.6 q0 -2.2 2.2 -2.2 q1.6 0 2.3 1.5 q0.7 -1.5 2.3 -1.5 q2.2 0 2.2 2.2 q0 2.6 -4.5 5.6z" fill="#e23b4e"/>
   </svg>`
 };
+
+
+/* ================== 붕당정치 인물카드 ================== */
+const PARTY = {
+  '동인':{c:'#3fb37f',cd:'#2b8a5f'}, '서인':{c:'#6ec3f4',cd:'#3f9bd0'}, '남인':{c:'#ff9fb3',cd:'#e0738c'},
+  '노론':{c:'#8c9bf2',cd:'#5f6fd0'}, '소론':{c:'#b69cf2',cd:'#8e74cf'}, '왕':{c:'#ffc84a',cd:'#e0a521'},
+  '학통':{c:'#d9b38c',cd:'#b48a62'}
+};
+const PEOPLE = [
+ {nm:'이황', p:'학통', tag:'동인·남인의 스승', yr:'1501 ~ 1570', beard:1, one:'영남 사림의 큰 스승',
+  back:['이(理)를 중시한 성리학자로 『성학십도』를 지었어요','제자들이 동인, 뒤에 남인의 중심이 되었어요','붕당이 갈라지기 전인 1570년에 세상을 떠났어요']},
+ {nm:'이이', p:'학통', tag:'서인의 스승', yr:'1536 ~ 1584', one:'기호 사림의 큰 스승',
+  back:['『성학집요』를 짓고 현실 개혁을 강조했어요','동인과 서인의 다툼을 말리려고 애썼어요','제자들이 서인의 중심이 되었어요']},
+ {nm:'심의겸', p:'서인', yr:'1535 ~ 1587', one:'서인의 중심이 된 외척',
+  back:['명종의 왕비 인순왕후의 동생이에요','이조전랑 자리를 두고 김효원과 대립했어요','집이 한양 서쪽(정동)에 있어 그 무리를 서인이라 불렀어요']},
+ {nm:'김효원', p:'동인', yr:'1542 ~ 1590', one:'이조전랑 다툼의 주인공',
+  back:['이조전랑 자리를 두고 심의겸과 대립했어요','집이 한양 동쪽(건천동)에 있어 그 무리를 동인이라 불렀어요','이황·조식의 학문을 잇는 사림이 많이 함께했어요']},
+ {nm:'정철', p:'서인', yr:'1536 ~ 1593', beard:1, one:'기축옥사와 가사 문학',
+  back:['정여립 모반 사건(기축옥사) 처리를 맡아 동인이 크게 피해를 입었어요','광해군을 세자로 세우자고 했다가(건저의) 쫓겨났어요','「관동별곡」, 「사미인곡」을 지었어요']},
+ {nm:'허목', p:'남인', yr:'1595 ~ 1682', beard:1, one:'예송의 남인 대표',
+  back:['예송 때 효종을 맏아들처럼 대우해야 한다며 서인과 맞섰어요','기해예송에서 자의대비의 3년 상복을 주장했어요','독특한 전서체 글씨로도 유명해요']},
+ {nm:'송시열', p:'노론', tag:'서인 → 노론', yr:'1607 ~ 1689', beard:1, one:'서인과 노론의 큰 어른',
+  back:['예송에서 서인의 주장을 이끌었어요','서인이 갈라질 때 노론의 중심이 되었어요','기사환국(1689) 때 원자 책봉에 반대하다 사약을 받았어요']},
+ {nm:'허적', p:'남인', yr:'1610 ~ 1680', beard:1, one:'경신환국으로 몰락한 영의정',
+  back:['숙종 때 영의정을 지낸 남인의 중심 인물이에요','왕실 천막(유악)을 허락 없이 쓴 일과 서자 허견의 역모 사건이 겹쳤어요','이 일로 경신환국(1680)이 일어나 남인이 밀려났어요']},
+ {nm:'숙종', p:'왕', tag:'조선 19대 왕', yr:'재위 1674 ~ 1720', king:1, one:'환국으로 왕권을 키운 왕',
+  back:['경신·기사·갑술환국으로 집권 붕당을 확 바꿨어요','왕권은 강해졌지만 붕당 사이의 보복이 심해졌어요','인현왕후·희빈 장씨 이야기와도 얽혀 있어요']},
+ {nm:'윤증', p:'소론', yr:'1629 ~ 1714', beard:1, one:'스승과 갈라선 소론의 중심',
+  back:['송시열의 제자였지만 스승과 크게 갈등했어요(회니시비)','서인이 노론과 소론으로 갈라질 때 소론의 중심이 되었어요']},
+ {nm:'영조', p:'왕', tag:'조선 21대 왕', yr:'재위 1724 ~ 1776', king:1, one:'탕평비를 세운 탕평의 왕',
+  back:['성균관 입구에 탕평비를 세웠어요(1742)','온건한 인물을 고루 쓰는 완론탕평을 폈어요','서원을 정리하고 이조전랑의 권한을 줄였어요','군역 부담을 줄인 균역법을 시행했어요']},
+ {nm:'정조', p:'왕', tag:'조선 22대 왕', yr:'재위 1776 ~ 1800', king:1, one:'규장각을 세운 개혁 군주',
+  back:['옳고 그름을 분명히 가리는 준론탕평을 폈어요','규장각을 설치해 인재를 길렀어요','수원 화성을 쌓았어요']}
+];
+function person(P, size){
+  const L='#3b3340', SK='#ffe6cf', robe = P.king ? '#e2574c' : '#f7f2ea';
+  const hat = P.king
+    ? `<path d="M29 44 Q29 21 50 21 Q71 21 71 44 Z" fill="#2f2933"/>
+       <ellipse cx="33" cy="24" rx="7.5" ry="4.5" transform="rotate(-30 33 24)" fill="#2f2933"/>
+       <ellipse cx="67" cy="24" rx="7.5" ry="4.5" transform="rotate(30 67 24)" fill="#2f2933"/>
+       <rect x="29" y="40" width="42" height="5" rx="2" fill="#4a4250"/>`
+    : `<path d="M28 44 Q28 30 50 29 Q72 30 72 44 Z" fill="#3a2b28"/>
+       <ellipse cx="50" cy="35" rx="35" ry="6" fill="#2f2933" opacity=".92"/>
+       <path d="M39 35 q0.5 -17 11 -17 q10.5 0 11 17z" fill="#2f2933"/>
+       <rect x="39" y="30" width="22" height="4" rx="2" fill="#4a4250"/>
+       <path d="M24 38 q-6 26 14 40 M76 38 q6 26 -14 40" stroke="#2f2933" stroke-width="1.3" fill="none" stroke-dasharray="2 2.2"/>`;
+  const beard = P.beard ? `<path d="M44 70 q6 15 12 0 q-6 4 -12 0z" fill="#4a4048"/><path d="M42 66.5 q4 -2.5 8 0 q4 -2.5 8 0" stroke="#4a4048" stroke-width="2.2" fill="none" stroke-linecap="round"/>` : '';
+  return `<svg viewBox="0 0 100 100" width="${size||100}" height="${size||100}" aria-hidden="true">
+    <path d="M18 100 Q18 77 50 77 Q82 77 82 100 Z" fill="${robe}" stroke="${L}" stroke-width="2.4"/>
+    ${P.king?`<circle cx="50" cy="91" r="7" fill="#ffd34d" stroke="${L}" stroke-width="1.8"/>`:`<path d="M42 78 L50 89 L58 78" stroke="${L}" stroke-width="2" fill="none"/><path d="M50 89 L46 100 M50 89 L54 100" stroke="#5a4a40" stroke-width="1.6"/>`}
+    <ellipse cx="50" cy="58" rx="21" ry="19.5" fill="${SK}" stroke="${L}" stroke-width="2.4"/>
+    <circle cx="42.5" cy="57" r="2.6" fill="${L}"/><circle cx="57.5" cy="57" r="2.6" fill="${L}"/>
+    <circle cx="43.4" cy="56" r=".9" fill="#fff"/><circle cx="58.4" cy="56" r=".9" fill="#fff"/>
+    <ellipse cx="36" cy="63" rx="4" ry="2.4" fill="#ff8f9e" opacity=".55"/><ellipse cx="64" cy="63" rx="4" ry="2.4" fill="#ff8f9e" opacity=".55"/>
+    ${P.beard?'':`<path d="M47 64 q3 2.6 6 0" stroke="${L}" stroke-width="1.9" fill="none" stroke-linecap="round"/>`}
+    ${beard}${hat}
+  </svg>`;
+}
+function cards(){
+  $app.innerHTML = `
+    <div class="top">
+      <button class="back" id="back">‹ 처음으로</button>
+      <div class="stat">🃏 <span>${PEOPLE.length}명</span></div>
+    </div>
+    <div class="hero">
+      <div class="bounce">${mascot('wow',80)}</div>
+      <div><h1>붕당정치 인물카드</h1><p>카드를 누르면 뒤집어져요! 뒷면에서 한 일을 확인해 봐.</p></div>
+    </div>
+    <div class="legend" style="margin-top:16px">${Object.entries(PARTY).map(([k,v])=>`<span style="--c:${v.cd}">${k}</span>`).join('')}</div>
+    <div class="pgrid" id="pgrid"></div>`;
+  document.getElementById('back').onclick = home;
+  const g = document.getElementById('pgrid');
+  PEOPLE.forEach(P=>{
+    const col = PARTY[P.p];
+    const c = el(`<div class="pc" style="--c:${col.c};--cd:${col.cd}" role="button" aria-label="${P.nm} 카드 뒤집기">
+      <div class="pc-in">
+        <div class="side front">
+          <span class="flipmark">↻</span>
+          <div class="pic">${person(P)}</div>
+          <div class="info"><div class="nm">${P.nm}</div><span class="party">${P.tag||P.p}</span>
+            <div class="yr">${P.yr}</div><div class="one">${P.one}</div></div>
+        </div>
+        <div class="side back">
+          <div class="nm">${person(P,30)}${P.nm}</div>
+          <ul>${P.back.map(t=>`<li>${t}</li>`).join('')}</ul>
+          <div class="hint">다시 누르면 앞면</div>
+        </div>
+      </div></div>`);
+    c.onclick = ()=>c.classList.toggle('flip');
+    g.appendChild(c);
+  });
+}
 
 /* ================== 문제 데이터 ================== */
 const LESSONS = [
@@ -511,9 +630,18 @@ function home(){
         </span>
         <span class="tarrow">›</span>
       </button>
+      <button class="topic" id="topicCards" aria-label="붕당정치 인물카드 열기">
+        <span class="mosaic">${['이이','송시열','허목','영조'].map(n=>{const P=PEOPLE.find(x=>x.nm===n);return `<i style="--c:${PARTY[P.p].c}">${person(P)}</i>`;}).join('')}</span>
+        <span class="tinfo">
+          <span class="ttitle">붕당정치 인물카드</span>
+          <span class="tsub">${PEOPLE.length}명 · 카드를 눌러 뒤집어 봐요</span>
+        </span>
+        <span class="tarrow">›</span>
+      </button>
     </div>
     <p class="note">고등학교 한국사 교과 내용을 기준으로 만들었어요.</p>`;
   document.getElementById('topicBungdang').onclick = course;
+  document.getElementById('topicCards').onclick = cards;
 }
 
 /* ================== 조선 붕당정치 코스 (4단원) ================== */
