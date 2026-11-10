@@ -1,0 +1,13 @@
+{
+  "name": "두두와 함께하는 조선 붕당정치 퀴즈",
+  "short_name": "두두 붕당퀴즈",
+  "start_url": "./bungdang-quiz.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8ec",
+  "theme_color": "#fff8ec",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
