@@ -653,8 +653,8 @@ function check(){
   } else {
     S.combo=0; S.queue.push(current);
   }
-  if(current.t!=='match') beep(r.ok);
-  if(r.ok) setTimeout(miumiu, 250);
+  if(r.ok) miumiu();               // 정답: 말풍선과 동시에 미우미우 목소리
+  else beep(false);                // 오답: 짧은 효과음
   updateBar();
   const f = document.getElementById('foot'); f.className = 'foot '+(r.ok?'good':'bad');
   const comboTxt = r.ok && S.combo>=3 ? ` 🔥 ${S.combo}연속!` : '';
