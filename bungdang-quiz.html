@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>붕이와 함께하는 조선 붕당정치 퀴즈</title>
+<title>두두와 함께하는 조선 붕당정치 퀴즈</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -138,62 +138,56 @@ button{font-family:inherit;cursor:pointer;border:none}
 <div class="app" id="app"></div>
 
 <script>
-/* ================== 마스코트 (오리지널 캐릭터: 갓 쓴 꼬마 선비 '붕이') ================== */
+/* ================== 마스코트 (사용자 그림 캐릭터: 줄무늬 티셔츠 곰돌이 '두두') ================== */
+let _mid=0;
 function mascot(mood='normal', size=90){
-  const HAIR='#3a2b28', SKIN='#ffe9d2', LINE='#3b3340';
+  const FUR='#f6b48a', LINE='#3b3340', BLUE='#3aaee6', id='dd'+(++_mid);
+  const brows = {
+    normal:`<path d="M35 46 L43 43.5 M69 46 L61 43.5" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>`,
+    happy:`<path d="M35 44.5 L43 43 M69 44.5 L61 43" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>`,
+    sad:`<path d="M35 48 L43 43 M69 48 L61 43" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>`,
+    wow:`<path d="M35 42 L43 40.5 M69 42 L61 40.5" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>`
+  }[mood];
   const eyes = {
-    normal:`<ellipse cx="41" cy="65" rx="5.2" ry="6.2" fill="${LINE}"/><ellipse cx="63" cy="65" rx="5.2" ry="6.2" fill="${LINE}"/>
-      <circle cx="43" cy="62.5" r="2.2" fill="#fff"/><circle cx="65" cy="62.5" r="2.2" fill="#fff"/>
-      <circle cx="39.5" cy="67.5" r="1" fill="#fff"/><circle cx="61.5" cy="67.5" r="1" fill="#fff"/>`,
-    happy:`<path d="M35 66 q6 -8 12 0" stroke="${LINE}" stroke-width="3.6" fill="none" stroke-linecap="round"/>
-      <path d="M57 66 q6 -8 12 0" stroke="${LINE}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`,
-    sad:`<ellipse cx="41" cy="66" rx="5" ry="5.6" fill="${LINE}"/><ellipse cx="63" cy="66" rx="5" ry="5.6" fill="${LINE}"/>
-      <circle cx="42.6" cy="64" r="2" fill="#fff"/><circle cx="64.6" cy="64" r="2" fill="#fff"/>
-      <path d="M35 59 l8 -3" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/><path d="M69 59 l-8 -3" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>
-      <path d="M67 71 q3.5 6 0 9 q-3.5 -3 0 -9z" fill="#7cc8f2"/>`,
-    wow:`<circle cx="41" cy="65" r="6.6" fill="${LINE}"/><circle cx="63" cy="65" r="6.6" fill="${LINE}"/>
-      <path d="M43.5 60.5 l1 2 l2 1 l-2 1 l-1 2 l-1 -2 l-2 -1 l2 -1z" fill="#fff"/><path d="M65.5 60.5 l1 2 l2 1 l-2 1 l-1 2 l-1 -2 l-2 -1 l2 -1z" fill="#fff"/>
-      <circle cx="39" cy="68" r="1.2" fill="#fff"/><circle cx="61" cy="68" r="1.2" fill="#fff"/>`
+    normal:`<circle cx="41" cy="54" r="2.9" fill="${LINE}"/><circle cx="63" cy="54" r="2.9" fill="${LINE}"/>`,
+    happy:`<path d="M37.5 55 q3.5 -5 7 0 M59.5 55 q3.5 -5 7 0" stroke="${LINE}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`,
+    sad:`<circle cx="41" cy="55" r="2.7" fill="${LINE}"/><circle cx="63" cy="55" r="2.7" fill="${LINE}"/>
+      <path d="M66 59 q3 5 0 7.5 q-3 -2.5 0 -7.5z" fill="#7cc8f2"/>`,
+    wow:`<circle cx="41" cy="54" r="4.6" fill="${LINE}"/><circle cx="63" cy="54" r="4.6" fill="${LINE}"/>
+      <circle cx="42.6" cy="52.4" r="1.6" fill="#fff"/><circle cx="64.6" cy="52.4" r="1.6" fill="#fff"/>`
   }[mood];
   const mouth = {
-    normal:`<path d="M48.5 76 q3.5 3.5 7 0" stroke="${LINE}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
-    happy:`<path d="M46 74.5 q6 9 12 0 z" fill="#e8576b"/><path d="M48.5 77.5 q3.5 2.5 7 0" fill="#ff9aa8"/>`,
-    sad:`<path d="M48 79 q4 -3.5 8 0" stroke="${LINE}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
-    wow:`<ellipse cx="52" cy="78" rx="3.6" ry="4.4" fill="#e8576b"/>`
+    normal:`<path d="M52 62.5 q-1 4.5 -5.5 4 M52 62.5 q1 4.5 5.5 4" stroke="${LINE}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+    happy:`<path d="M46.5 64.5 q5.5 8 11 0 z" fill="#e8576b" stroke="${LINE}" stroke-width="1.8" stroke-linejoin="round"/>`,
+    sad:`<path d="M47.5 68 q4.5 -4 9 0" stroke="${LINE}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+    wow:`<ellipse cx="52" cy="67" rx="3" ry="3.8" fill="#e8576b" stroke="${LINE}" stroke-width="1.6"/>`
   }[mood];
+  const blush = (mood==='happy'||mood==='wow') ? `<ellipse cx="33" cy="62" rx="5" ry="3" fill="#ff8f9e" opacity=".55"/><ellipse cx="71" cy="62" rx="5" ry="3" fill="#ff8f9e" opacity=".55"/>` : '';
   return `<svg width="${size}" height="${size}" viewBox="0 0 104 104" aria-hidden="true">
+    <defs><clipPath id="${id}"><path d="M33 98 Q31 80 52 78 Q73 80 71 98 Z"/></clipPath></defs>
     <ellipse cx="52" cy="100" rx="24" ry="3.5" fill="#000" opacity=".08"/>
-    <!-- 저고리 -->
-    <path d="M31 99 Q31 84 52 84 Q73 84 73 99 Z" fill="#9bd3f0"/>
-    <path d="M44 85 L52 95 L60 85" stroke="#fff" stroke-width="3.2" fill="none" stroke-linejoin="round"/>
-    <path d="M56 92 q5 1 6 6 M56 92 q2 4 -1 7" stroke="#ff8fa3" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-    <!-- 갓끈 (얼굴 뒤로) -->
-    <path d="M24 40 q-8 30 16 47" stroke="#2f2933" stroke-width="1.5" fill="none" stroke-dasharray="2 2.4"/>
-    <path d="M81 33 q10 34 -17 54" stroke="#2f2933" stroke-width="1.5" fill="none" stroke-dasharray="2 2.4"/>
-    <!-- 뒷머리 -->
-    <ellipse cx="52" cy="58" rx="31" ry="25" fill="${HAIR}"/>
-    <path d="M22 62 q-2 10 5 14 q-1 -6 2 -9z M82 62 q2 10 -5 14 q1 -6 -2 -9z" fill="${HAIR}"/>
-    <!-- 귀 -->
-    <ellipse cx="25" cy="68" rx="4.6" ry="5.4" fill="${SKIN}" stroke="#f2cfa5" stroke-width="1.5"/>
-    <ellipse cx="79" cy="68" rx="4.6" ry="5.4" fill="${SKIN}" stroke="#f2cfa5" stroke-width="1.5"/>
-    <!-- 얼굴 -->
-    <ellipse cx="52" cy="66" rx="26.5" ry="22.5" fill="${SKIN}" stroke="#f2cfa5" stroke-width="1.5"/>
-    <!-- 앞머리 -->
-    <path d="M25 63 Q24 38 52 36 Q80 38 79 63 L75 55 L70 60 L65 51 L59 58 L52 50 L46 58 L40 51 L35 59 L30 54 Z" fill="${HAIR}"/>
-    <path d="M38 44 q6 -4 12 -3" stroke="#6b5550" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>
-    <!-- 볼 -->
-    <ellipse cx="33" cy="75" rx="5.5" ry="3.6" fill="#ffa9b4" opacity=".8"/>
-    <ellipse cx="71" cy="75" rx="5.5" ry="3.6" fill="#ffa9b4" opacity=".8"/>
-    ${eyes}${mouth}
-    <circle cx="40" cy="87" r="2.4" fill="#ff8fa3"/><circle cx="64" cy="87" r="2.4" fill="#ff8fa3"/>
-    <!-- 갓 (살짝 기울어진 작은 갓) -->
-    <g transform="rotate(-9 52 34)">
-      <ellipse cx="52" cy="35" rx="31" ry="5.5" fill="#2f2933" opacity=".9"/>
-      <path d="M42 35 q0.5 -15 10 -15 q9.5 0 10 15z" fill="#2f2933"/>
-      <rect x="42" y="30" width="20" height="4" rx="2" fill="#4a4250"/>
+    <!-- 팔 -->
+    <path d="M36 82 Q26 88 22 97 Q25 100 28 97 Q32 91 38 88 Z" fill="${FUR}" stroke="${LINE}" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M68 82 Q78 88 82 97 Q79 100 76 97 Q72 91 66 88 Z" fill="${FUR}" stroke="${LINE}" stroke-width="2.2" stroke-linejoin="round"/>
+    <!-- 줄무늬 티셔츠 -->
+    <path d="M33 98 Q31 80 52 78 Q73 80 71 98 Z" fill="#fff"/>
+    <g clip-path="url(#${id})" fill="${BLUE}">
+      <rect x="20" y="79" width="64" height="4.5"/><rect x="20" y="87" width="64" height="4.5"/><rect x="20" y="95" width="64" height="4.5"/>
     </g>
-    <!-- 삐죽 머리카락 -->
-    <path d="M30 37 q-6 -6 -3 -12 q2 6 7 8z" fill="${HAIR}"/>
+    <path d="M33 98 Q31 80 52 78 Q73 80 71 98 Z" fill="none" stroke="${LINE}" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M52 94 q-5 -3.5 -5 -6.5 q0 -2.5 2.5 -2.5 q1.8 0 2.5 1.8 q0.7 -1.8 2.5 -1.8 q2.5 0 2.5 2.5 q0 3 -5 6.5z" fill="#e23b4e"/>
+    <!-- 귀 -->
+    <circle cx="29" cy="33" r="9" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/>
+    <circle cx="75" cy="33" r="9" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/>
+    <!-- 얼굴 -->
+    <path d="M24 55 Q23 32 52 31 Q81 32 80 55 Q79 79 52 79 Q25 79 24 55 Z" fill="${FUR}" stroke="${LINE}" stroke-width="2.6"/>
+    ${blush}
+    <!-- 주근깨 -->
+    <g fill="${LINE}"><circle cx="30" cy="60" r="1"/><circle cx="33" cy="63" r="1"/><circle cx="29" cy="65" r="1"/>
+      <circle cx="74" cy="60" r="1"/><circle cx="71" cy="63" r="1"/><circle cx="75" cy="65" r="1"/></g>
+    ${brows}${eyes}
+    <ellipse cx="52" cy="60.5" rx="3.2" ry="2.3" fill="${LINE}"/>
+    ${mouth}
   </svg>`;
 }
 
@@ -315,7 +309,7 @@ const pick = a => a[Math.floor(Math.random()*a.length)];
 /* ================== 홈 ================== */
 function home(){
   const doneCount = Object.keys(save.done).length;
-  const msg = doneCount===0 ? '안녕! 나는 꼬마 선비 붕이야. 붕당정치, 같이 정복해 볼까?' :
+  const msg = doneCount===0 ? '안녕! 나는 곰돌이 두두야. 붕당정치, 같이 정복해 볼까?' :
               doneCount===LESSONS.length ? '와! 모든 단원을 다 깼어! 복습하면 더 오래 기억나 ✨' :
               `벌써 ${doneCount}단원 완료! 다음 단원도 가 보자!`;
   $app.innerHTML = `
