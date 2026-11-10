@@ -114,8 +114,8 @@ button{font-family:inherit;cursor:pointer;border:none}
 .fb .ans{font-family:'Jua';color:var(--red-d);margin-bottom:4px;font-size:16px}
 .fb-icon{flex:none;width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px}
 .fb-icon{position:relative}
-.say{position:absolute;left:-4px;bottom:calc(100% + 12px);white-space:nowrap;font-family:'Jua';font-size:17px;color:var(--jade-d);
-  background:#fff;border:2px solid #bfe8d2;border-radius:14px;padding:5px 11px;box-shadow:0 3px 0 #bfe8d2;
+.say{position:absolute;left:-4px;bottom:calc(100% + 12px);white-space:nowrap;font-family:'Jua';font-size:23px;color:var(--jade-d);
+  background:#fff;border:2px solid #bfe8d2;border-radius:16px;padding:7px 15px;box-shadow:0 4px 0 #bfe8d2;
   transform-origin:18px 100%;animation:sayPop .45s cubic-bezier(.3,1.6,.5,1) both}
 .say::after{content:'';position:absolute;left:14px;top:100%;border:7px solid transparent;border-top-color:#bfe8d2}
 .say::before{content:'';position:absolute;left:16px;top:100%;margin-top:-3px;border:5px solid transparent;border-top-color:#fff;z-index:1}
@@ -303,6 +303,19 @@ function beep(ok){
       g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+i*0.11+0.16);
       o.connect(g).connect(actx.destination); o.start(actx.currentTime+i*0.11); o.stop(actx.currentTime+i*0.11+0.18);
     });
+  }catch(e){}
+}
+
+/* 두두 목소리: 미우미우 */
+function miumiu(){
+  try{
+    if(!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance('미우미우');
+    u.lang='ko-KR'; u.pitch=1.9; u.rate=1.15; u.volume=1;
+    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith('ko'));
+    if(v) u.voice=v;
+    speechSynthesis.speak(u);
   }catch(e){}
 }
 
@@ -522,6 +535,7 @@ function check(){
     S.combo=0; S.hearts--; S.queue.push(current);
   }
   if(current.t!=='match') beep(r.ok);
+  if(r.ok) setTimeout(miumiu, 250);
   updateBar();
   const f = document.getElementById('foot'); f.className = 'foot '+(r.ok?'good':'bad');
   const comboTxt = r.ok && S.combo>=3 ? ` 🔥 ${S.combo}연속!` : '';
