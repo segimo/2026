@@ -44,6 +44,21 @@ body{overscroll-behavior-y:none}
 .hero h1{margin:0;font-size:24px;line-height:1.2}
 .hero p{margin:4px 0 0;color:var(--muted);font-size:14px}
 .bubble{position:relative;background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 14px;font-size:15px}
+.topics{padding:18px 18px 10px;display:grid;gap:16px}
+.topic{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:28px;
+  padding:16px;box-shadow:0 7px 0 var(--line);color:var(--ink);transition:transform .1s,box-shadow .1s}
+.topic:active{transform:translateY(5px);box-shadow:0 2px 0 var(--line)}
+.mosaic{flex:none;width:118px;height:118px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mosaic i{background:var(--c);border-radius:14px;display:flex;align-items:center;justify-content:center}
+.mosaic svg{width:84%;height:84%}
+.tinfo{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ttitle{font-family:'Jua';font-size:25px}
+.tsub{font-size:14px;color:var(--muted)}
+.tbar{height:12px;background:#ece3d6;border-radius:999px;overflow:hidden}
+.tbar b{display:block;height:100%;background:var(--jade);border-radius:999px}
+.tarrow{flex:none;font-family:'Jua';font-size:44px;color:#cbbfb3;padding-right:4px}
+.back{font-family:'Jua';font-size:18px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:6px 16px 6px 12px;color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.back:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
 .course{margin:18px 18px 10px;background:#fff;border:2px solid var(--line);border-radius:28px;box-shadow:0 5px 0 var(--line);padding:18px 0 22px}
 .course-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 20px}
 .course-head h2{margin:0;font-size:21px}
@@ -165,6 +180,11 @@ body{overscroll-behavior-y:none}
   .hero svg{width:112px;height:112px}
   .hero h1{font-size:32px}
   .hero p{font-size:17px}
+  .topics{padding:24px 32px 10px}
+  .topic{padding:22px 26px;gap:26px;border-radius:34px}
+  .mosaic{width:180px;height:180px;gap:9px}.mosaic i{border-radius:20px}
+  .ttitle{font-size:36px}.tsub{font-size:17px}.tbar{height:16px}.tarrow{font-size:60px}
+  .back{font-size:21px;padding:8px 20px 8px 14px}
   .course{margin:18px 32px 10px;padding:24px 0 28px;border-radius:34px}
   .course-head{padding:0 28px}
   .course-head h2{font-size:26px}
@@ -465,9 +485,9 @@ const pick = a => a[Math.floor(Math.random()*a.length)];
 function home(){
   const doneCount = LESSONS.filter(L=>save.done[L.id]).length;
   const totalQ = LESSONS.reduce((n,L)=>n+L.qs.length,0);
-  const msg = doneCount===0 ? '안녕! 나는 곰돌이 두두야. 붕당정치, 같이 정복해 볼까?' :
-              doneCount===LESSONS.length ? '와! 모든 단원을 다 깼어! 복습하면 더 오래 기억나 ✨' :
-              `벌써 ${doneCount}단원 완료! 다음 단원도 가 보자!`;
+  const msg = doneCount===0 ? '안녕! 나는 곰돌이 두두야. 어떤 주제부터 정복해 볼까?' :
+              doneCount===LESSONS.length ? '와! 붕당정치를 다 깼어! 복습하면 더 오래 기억나 ✨' :
+              `붕당정치 벌써 ${doneCount}단원 완료! 이어서 가 보자!`;
   $app.innerHTML = `
     <div class="top">
       <div class="stat">📜 <span>${doneCount}/${LESSONS.length}</span></div>
@@ -476,16 +496,42 @@ function home(){
     <div class="hero">
       <div class="bounce">${mascot('happy',80)}</div>
       <div>
-        <h1>조선 붕당정치<br>한 판 정리!</h1>
+        <h1>두두와 함께하는<br>한국사 퀴즈!</h1>
         <p>${msg}</p>
       </div>
     </div>
+    <div class="topics">
+      <button class="topic" id="topicBungdang" aria-label="조선 붕당정치 열기">
+        <span class="mosaic">${LESSONS.map(L=>`<i style="--c:${L.c}">${ICONS[L.id]}</i>`).join('')}</span>
+        <span class="tinfo">
+          <span class="ttitle">조선 붕당정치</span>
+          <span class="tsub">4단원 · ${totalQ}문제</span>
+          <span class="tbar"><b style="width:${doneCount/LESSONS.length*100}%"></b></span>
+          <span class="tsub">${doneCount}/${LESSONS.length} 단원 완료${save.done.all?' · 🏆 총정리 완료':''}</span>
+        </span>
+        <span class="tarrow">›</span>
+      </button>
+    </div>
+    <p class="note">고등학교 한국사 교과 내용을 기준으로 만들었어요.</p>`;
+  document.getElementById('topicBungdang').onclick = course;
+}
+
+/* ================== 조선 붕당정치 코스 (4단원) ================== */
+function course(){
+  const doneCount = LESSONS.filter(L=>save.done[L.id]).length;
+  const totalQ = LESSONS.reduce((n,L)=>n+L.qs.length,0);
+  $app.innerHTML = `
+    <div class="top">
+      <button class="back" id="back">‹ 처음으로</button>
+      <div class="stat" style="color:var(--gold-d)">⚡ <span>${save.xp} XP</span></div>
+    </div>
     <div class="course">
-      <div class="course-head"><h2>📜 붕당정치 4단원 코스</h2><span class="cnt">${doneCount}/${LESSONS.length} 완료</span></div>
+      <div class="course-head"><h2>📜 조선 붕당정치</h2><span class="cnt">${doneCount}/${LESSONS.length} 완료</span></div>
       <div class="stages" id="stages"></div>
       <button class="btn allbtn" id="allBtn">🔥 전체 한 번에 풀기<small>4단원 ${totalQ}문제 총정리${save.best.all!=null?` · 최고 ${save.best.all}%`:''}</small>${save.done.all?'<span class="badge">🏆</span>':''}</button>
     </div>
-    <p class="note">고등학교 한국사 교과 내용을 기준으로 만들었어요.<br>틀린 문제는 단원 끝에 다시 나와요 · 끝까지 맞히면 단원 정복!</p>`;
+    <p class="note">틀린 문제는 단원 끝에 다시 나와요 · 끝까지 맞히면 단원 정복!</p>`;
+  document.getElementById('back').onclick = home;
   const wrap = document.getElementById('stages');
   LESSONS.forEach((L,i)=>{
     const w = el(`<div class="stage">
@@ -530,7 +576,7 @@ function confirmQuit(){
     <button class="btn ghost" id="leave">그만두기</button></div></div>`);
   document.body.appendChild(m);
   m.querySelector('#stay').onclick = ()=>m.remove();
-  m.querySelector('#leave').onclick = ()=>{ m.remove(); home(); };
+  m.querySelector('#leave').onclick = ()=>{ m.remove(); course(); };
 }
 
 let current, getAnswer, ready;
@@ -717,11 +763,11 @@ function finish(win){
     <div style="width:100%;display:grid;gap:12px;margin-top:10px">
       ${win && LESSONS.indexOf(L)>=0 && LESSONS.indexOf(L)<LESSONS.length-1 ? `<button class="btn" id="nextL">다음 단원으로 →</button>`:''}
       <button class="btn ${win?'ghost':''}" id="again">${win?'한 번 더 복습하기':'다시 도전!'}</button>
-      <button class="btn ghost" id="home">지도로 돌아가기</button>
+      <button class="btn ghost" id="home">단원 목록으로</button>
     </div></div>`;
   const nl=document.getElementById('nextL'); if(nl) nl.onclick=()=>startLesson(LESSONS[LESSONS.indexOf(L)+1]);
   document.getElementById('again').onclick=()=>startLesson(L);
-  document.getElementById('home').onclick=home;
+  document.getElementById('home').onclick=course;
 }
 function confetti(){
   const cs=['#3fb37f','#ffc84a','#ff9fb3','#6ec3f4','#b69cf2'];
