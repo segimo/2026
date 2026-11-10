@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>붕이와 함께하는 조선 붕당정치 퀴즈</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff8ec; --card:#ffffff; --ink:#3b3340; --muted:#8a7f88;
+  --jade:#3fb37f; --jade-d:#2b8a5f; --jade-l:#dff5e9;
+  --red:#f2646a; --red-d:#c9444b; --red-l:#ffe4e5;
+  --pink:#ff9fb3; --gold:#ffc84a; --gold-d:#e0a521;
+  --sky:#6ec3f4; --sky-d:#3f9bd0; --line:#eadfce;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Gowun Dodum',sans-serif;
+  background-image:radial-gradient(#f3e6cf 1.2px,transparent 1.2px);background-size:22px 22px}
+.app{max-width:560px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;position:relative}
+h1,h2,h3,.jua{font-family:'Jua',sans-serif;font-weight:400}
+button{font-family:inherit;cursor:pointer;border:none}
+
+/* buttons */
+.btn{font-family:'Jua';font-size:19px;padding:14px 18px;border-radius:16px;width:100%;
+  background:var(--jade);color:#fff;box-shadow:0 5px 0 var(--jade-d);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--jade-d)}
+.btn:disabled{background:#e6dfd6;color:#b2a8a0;box-shadow:0 5px 0 #d2c9be;cursor:default}
+.btn.red{background:var(--red);box-shadow:0 5px 0 var(--red-d)}
+.btn.ghost{background:#fff;color:var(--muted);box-shadow:0 4px 0 var(--line);border:2px solid var(--line)}
+
+/* home */
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 6px}
+.stat{display:flex;gap:6px;align-items:center;font-family:'Jua';font-size:18px;background:#fff;
+  padding:6px 12px;border-radius:999px;border:2px solid var(--line)}
+.hero{display:flex;align-items:center;gap:12px;margin:8px 18px 4px;background:#fff;border:2px solid var(--line);
+  border-radius:22px;padding:14px 16px;box-shadow:0 4px 0 var(--line)}
+.hero h1{margin:0;font-size:24px;line-height:1.2}
+.hero p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.bubble{position:relative;background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 14px;font-size:15px}
+.path{display:flex;flex-direction:column;align-items:center;gap:26px;padding:30px 0 60px}
+.node-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
+.node{width:86px;height:80px;border-radius:50%;font-size:36px;display:flex;align-items:center;justify-content:center;
+  background:var(--c);box-shadow:0 7px 0 var(--cd);transition:transform .1s;position:relative}
+.node:active{transform:translateY(5px);box-shadow:0 2px 0 var(--cd)}
+.node.done::after{content:'⭐';position:absolute;top:-8px;right:-6px;font-size:24px}
+.node-label{font-family:'Jua';font-size:17px;background:#fff;padding:6px 12px;border-radius:12px;border:2px solid var(--line);text-align:center}
+.node-label small{display:block;font-family:'Gowun Dodum';font-size:12px;color:var(--muted)}
+.connector{width:6px;height:26px;background:repeating-linear-gradient(var(--line) 0 6px,transparent 6px 12px);margin:-26px 0}
+
+/* lesson */
+.lesson-top{display:flex;align-items:center;gap:12px;padding:16px 16px 8px}
+.x{background:none;font-size:26px;color:#b9aea6;padding:0 4px}
+.bar{flex:1;height:16px;background:#ece3d6;border-radius:999px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(var(--jade) 0 45%,#36a070 45%);
+  border-radius:999px;transition:width .4s cubic-bezier(.3,1.4,.6,1)}
+.hearts{font-family:'Jua';font-size:19px;color:var(--red);display:flex;align-items:center;gap:4px}
+.qarea{flex:1;padding:8px 18px 190px;animation:slide .35s ease}
+@keyframes slide{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+.tag{display:inline-flex;gap:6px;align-items:center;font-family:'Jua';color:var(--sky-d);font-size:15px;margin:6px 0}
+.qhead{display:flex;align-items:flex-end;gap:10px;margin:6px 0 18px}
+.qhead .bubble{flex:1;font-size:18px;line-height:1.55}
+.qhead .bubble::before{content:'';position:absolute;left:-10px;bottom:18px;border:8px solid transparent;border-right-color:var(--line)}
+.qhead .bubble::after{content:'';position:absolute;left:-6px;bottom:19px;border:7px solid transparent;border-right-color:#fff}
+.choices{display:grid;gap:12px}
+.choice{background:#fff;border:2px solid var(--line);border-radius:16px;padding:14px 16px;font-size:17px;text-align:left;
+  box-shadow:0 4px 0 var(--line);color:var(--ink);display:flex;gap:12px;align-items:center;font-family:'Gowun Dodum'}
+.choice .k{flex:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--line);display:flex;align-items:center;
+  justify-content:center;font-family:'Jua';color:var(--muted);font-size:15px}
+.choice.sel{border-color:var(--sky);background:#eaf6fe;box-shadow:0 4px 0 var(--sky)}
+.choice.sel .k{border-color:var(--sky);color:var(--sky-d)}
+.choice.right{border-color:var(--jade);background:var(--jade-l);box-shadow:0 4px 0 var(--jade)}
+.choice.wrong{border-color:var(--red);background:var(--red-l);box-shadow:0 4px 0 var(--red)}
+.tf{grid-template-columns:1fr 1fr}
+.tf .choice{flex-direction:column;justify-content:center;font-family:'Jua';font-size:22px;padding:22px 10px}
+.tf .choice span{font-size:40px}
+
+/* tiles */
+.answer-line{min-height:64px;border-bottom:2px solid var(--line);border-top:2px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:8px;padding:10px 0;align-content:flex-start;margin-bottom:22px}
+.answer-line.col{flex-direction:column;flex-wrap:nowrap;border:2px dashed var(--line);border-radius:16px;padding:10px;min-height:120px}
+.answer-line.col:empty::before{content:'아래 카드를 순서대로 눌러 쌓아요 ⬇';color:#c2b6ab;margin:auto}
+.bank{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tile{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 14px;font-size:16px;
+  box-shadow:0 4px 0 var(--line);color:var(--ink);font-family:'Gowun Dodum'}
+.tile.used{background:#ece3d6;color:transparent;box-shadow:none;border-color:#ece3d6;pointer-events:none}
+.tile.num{display:flex;gap:10px;align-items:center;text-align:left}
+.tile.num b{font-family:'Jua';color:var(--sky-d)}
+.sentence{font-size:19px;line-height:2.4;background:#fff;border:2px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:22px}
+.slot{display:inline-block;min-width:74px;border-bottom:3px solid var(--sky);margin:0 4px;text-align:center;
+  font-family:'Jua';color:var(--sky-d);line-height:1.5;cursor:pointer;vertical-align:baseline}
+.slot.empty{color:transparent}
+
+/* match */
+.match{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.match .col{display:grid;gap:12px;align-content:start}
+.mt{background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px;font-size:15px;min-height:62px;
+  box-shadow:0 4px 0 var(--line);color:var(--ink);font-family:'Gowun Dodum';line-height:1.35}
+.mt.sel{border-color:var(--sky);background:#eaf6fe;box-shadow:0 4px 0 var(--sky)}
+.mt.ok{border-color:var(--jade);background:var(--jade-l);color:var(--jade-d);box-shadow:none;opacity:.55;pointer-events:none}
+.mt.bad{animation:shake .35s;border-color:var(--red);background:var(--red-l)}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* footer / feedback */
+.foot{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:2px solid var(--line);padding:16px 18px 22px;z-index:5}
+.foot-in{max-width:524px;margin:0 auto}
+.foot.good{background:var(--jade-l);border-color:#bfe8d2}
+.foot.bad{background:var(--red-l);border-color:#ffc6c8}
+.fb{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;animation:pop .3s ease}
+@keyframes pop{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+.fb h3{margin:0 0 4px;font-size:22px}
+.foot.good h3{color:var(--jade-d)} .foot.bad h3{color:var(--red-d)}
+.fb p{margin:0;font-size:15px;line-height:1.55}
+.fb .ans{font-family:'Jua';color:var(--red-d);margin-bottom:4px;font-size:16px}
+.fb-icon{flex:none;width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px}
+
+/* result */
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 22px;text-align:center;gap:14px}
+.result h2{font-size:32px;margin:0;color:var(--gold-d)}
+.result.fail h2{color:var(--red-d)}
+.cards{display:flex;gap:12px;width:100%}
+.rc{flex:1;border-radius:16px;border:2px solid var(--c);overflow:hidden;background:#fff}
+.rc .h{background:var(--c);color:#fff;font-family:'Jua';padding:6px;font-size:14px}
+.rc .v{font-family:'Jua';font-size:26px;padding:12px 4px;color:var(--c)}
+.bounce{animation:bounce 1.4s ease-in-out infinite}
+@keyframes bounce{50%{transform:translateY(-10px)}}
+.confetti{position:fixed;top:-20px;width:10px;height:14px;border-radius:3px;z-index:20;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.modal{position:fixed;inset:0;background:rgba(59,51,64,.45);display:flex;align-items:flex-end;justify-content:center;z-index:30}
+.modal .sheet{background:#fff;width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:24px 20px 26px;text-align:center;animation:pop .25s}
+.modal .sheet h3{margin:8px 0 6px;font-size:22px}
+.modal .sheet p{margin:0 0 18px;color:var(--muted)}
+.modal .sheet .btn+.btn{margin-top:12px}
+.note{font-size:12px;color:var(--muted);text-align:center;padding:0 24px 30px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* ================== 마스코트 (오리지널 캐릭터: 갓 쓴 꼬마 선비 '붕이') ================== */
+function mascot(mood='normal', size=90){
+  const HAIR='#3a2b28', SKIN='#ffe9d2', LINE='#3b3340';
+  const eyes = {
+    normal:`<ellipse cx="41" cy="65" rx="5.2" ry="6.2" fill="${LINE}"/><ellipse cx="63" cy="65" rx="5.2" ry="6.2" fill="${LINE}"/>
+      <circle cx="43" cy="62.5" r="2.2" fill="#fff"/><circle cx="65" cy="62.5" r="2.2" fill="#fff"/>
+      <circle cx="39.5" cy="67.5" r="1" fill="#fff"/><circle cx="61.5" cy="67.5" r="1" fill="#fff"/>`,
+    happy:`<path d="M35 66 q6 -8 12 0" stroke="${LINE}" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+      <path d="M57 66 q6 -8 12 0" stroke="${LINE}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`,
+    sad:`<ellipse cx="41" cy="66" rx="5" ry="5.6" fill="${LINE}"/><ellipse cx="63" cy="66" rx="5" ry="5.6" fill="${LINE}"/>
+      <circle cx="42.6" cy="64" r="2" fill="#fff"/><circle cx="64.6" cy="64" r="2" fill="#fff"/>
+      <path d="M35 59 l8 -3" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/><path d="M69 59 l-8 -3" stroke="${LINE}" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M67 71 q3.5 6 0 9 q-3.5 -3 0 -9z" fill="#7cc8f2"/>`,
+    wow:`<circle cx="41" cy="65" r="6.6" fill="${LINE}"/><circle cx="63" cy="65" r="6.6" fill="${LINE}"/>
+      <path d="M43.5 60.5 l1 2 l2 1 l-2 1 l-1 2 l-1 -2 l-2 -1 l2 -1z" fill="#fff"/><path d="M65.5 60.5 l1 2 l2 1 l-2 1 l-1 2 l-1 -2 l-2 -1 l2 -1z" fill="#fff"/>
+      <circle cx="39" cy="68" r="1.2" fill="#fff"/><circle cx="61" cy="68" r="1.2" fill="#fff"/>`
+  }[mood];
+  const mouth = {
+    normal:`<path d="M48.5 76 q3.5 3.5 7 0" stroke="${LINE}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
+    happy:`<path d="M46 74.5 q6 9 12 0 z" fill="#e8576b"/><path d="M48.5 77.5 q3.5 2.5 7 0" fill="#ff9aa8"/>`,
+    sad:`<path d="M48 79 q4 -3.5 8 0" stroke="${LINE}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
+    wow:`<ellipse cx="52" cy="78" rx="3.6" ry="4.4" fill="#e8576b"/>`
+  }[mood];
+  return `<svg width="${size}" height="${size}" viewBox="0 0 104 104" aria-hidden="true">
+    <ellipse cx="52" cy="100" rx="24" ry="3.5" fill="#000" opacity=".08"/>
+    <!-- 저고리 -->
+    <path d="M31 99 Q31 84 52 84 Q73 84 73 99 Z" fill="#9bd3f0"/>
+    <path d="M44 85 L52 95 L60 85" stroke="#fff" stroke-width="3.2" fill="none" stroke-linejoin="round"/>
+    <path d="M56 92 q5 1 6 6 M56 92 q2 4 -1 7" stroke="#ff8fa3" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <!-- 갓끈 (얼굴 뒤로) -->
+    <path d="M24 40 q-8 30 16 47" stroke="#2f2933" stroke-width="1.5" fill="none" stroke-dasharray="2 2.4"/>
+    <path d="M81 33 q10 34 -17 54" stroke="#2f2933" stroke-width="1.5" fill="none" stroke-dasharray="2 2.4"/>
+    <!-- 뒷머리 -->
+    <ellipse cx="52" cy="58" rx="31" ry="25" fill="${HAIR}"/>
+    <path d="M22 62 q-2 10 5 14 q-1 -6 2 -9z M82 62 q2 10 -5 14 q1 -6 -2 -9z" fill="${HAIR}"/>
+    <!-- 귀 -->
+    <ellipse cx="25" cy="68" rx="4.6" ry="5.4" fill="${SKIN}" stroke="#f2cfa5" stroke-width="1.5"/>
+    <ellipse cx="79" cy="68" rx="4.6" ry="5.4" fill="${SKIN}" stroke="#f2cfa5" stroke-width="1.5"/>
+    <!-- 얼굴 -->
+    <ellipse cx="52" cy="66" rx="26.5" ry="22.5" fill="${SKIN}" stroke="#f2cfa5" stroke-width="1.5"/>
+    <!-- 앞머리 -->
+    <path d="M25 63 Q24 38 52 36 Q80 38 79 63 L75 55 L70 60 L65 51 L59 58 L52 50 L46 58 L40 51 L35 59 L30 54 Z" fill="${HAIR}"/>
+    <path d="M38 44 q6 -4 12 -3" stroke="#6b5550" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>
+    <!-- 볼 -->
+    <ellipse cx="33" cy="75" rx="5.5" ry="3.6" fill="#ffa9b4" opacity=".8"/>
+    <ellipse cx="71" cy="75" rx="5.5" ry="3.6" fill="#ffa9b4" opacity=".8"/>
+    ${eyes}${mouth}
+    <circle cx="40" cy="87" r="2.4" fill="#ff8fa3"/><circle cx="64" cy="87" r="2.4" fill="#ff8fa3"/>
+    <!-- 갓 (살짝 기울어진 작은 갓) -->
+    <g transform="rotate(-9 52 34)">
+      <ellipse cx="52" cy="35" rx="31" ry="5.5" fill="#2f2933" opacity=".9"/>
+      <path d="M42 35 q0.5 -15 10 -15 q9.5 0 10 15z" fill="#2f2933"/>
+      <rect x="42" y="30" width="20" height="4" rx="2" fill="#4a4250"/>
+    </g>
+    <!-- 삐죽 머리카락 -->
+    <path d="M30 37 q-6 -6 -3 -12 q2 6 7 8z" fill="${HAIR}"/>
+  </svg>`;
+}
+
+
+/* ================== 문제 데이터 ================== */
+const LESSONS = [
+{ id:'l1', title:'붕당의 탄생', sub:'선조 ~ 인조반정', emoji:'🌱', c:'#3fb37f', cd:'#2b8a5f', qs:[
+  {t:'mc', q:'선조 때 사림이 <b>동인</b>과 <b>서인</b>으로 처음 갈라지게 된 계기는 어떤 관직을 둘러싼 다툼이었을까요?',
+   ch:['영의정','이조전랑','도승지','병조판서'], a:1,
+   exp:'이조전랑(이조의 정랑·좌랑)은 품계는 정5품·정6품으로 높지 않았지만, 삼사 관리를 추천하고 자기 후임자를 추천하는 권한이 있어서 아주 중요한 자리였어요. 1575년(선조 8) 김효원과 심의겸이 이 자리를 두고 대립하면서 동서 분당이 일어났어요.'},
+  {t:'mc', q:'선조가 즉위한 뒤 중앙 정치를 주도하게 되었고, 이후 내부에서 여러 붕당으로 나뉜 세력은?',
+   ch:['훈구','외척','사림','환관'], a:2,
+   exp:'여러 차례 사화로 피해를 입었던 사림은 선조 때 중앙 정계를 장악했어요. 붕당은 바로 이 사림 내부에서 정치적·학문적 입장 차이로 나뉜 것이에요.'},
+  {t:'match', q:'짝을 맞춰 보세요!',
+   pairs:[['동인','김효원'],['서인','심의겸'],['동인의 학통','이황 · 조식'],['서인의 학통','이이 · 성혼']],
+   exp:'동인은 김효원을 중심으로 이황·조식의 학문을 잇는 영남 사림이 많았고, 서인은 심의겸을 중심으로 이이·성혼의 학문을 잇는 기호 사림이 많았어요.'},
+  {t:'tf', q:'"동인·서인"이라는 이름은 김효원의 집이 한양의 동쪽에, 심의겸의 집이 서쪽에 있었던 데서 비롯되었다.',
+   a:true, exp:'맞아요! 김효원의 집은 동쪽 건천동에, 심의겸의 집은 서쪽 정동에 있어서 각각을 따르는 무리를 동인·서인이라 불렀어요.'},
+  {t:'blank', q:'빈칸을 채워 문장을 완성하세요.',
+   parts:['동인은 정여립 모반 사건과 정철의 건저의 사건 처리를 두고, 강경파인 ','과 온건파인 ','으로 나뉘었다.'],
+   bank:['북인','남인','노론','소론'], ans:['북인','남인'],
+   exp:'정여립 모반 사건(기축옥사, 1589)과 광해군을 세자로 세우자고 건의한 정철의 건저의 사건(1591)을 계기로, 서인에 강경한 북인과 온건한 남인으로 갈라졌어요.'},
+  {t:'mc', q:'광해군 때 정권을 잡았지만, <b>인조반정(1623)</b>으로 몰락한 붕당은?',
+   ch:['서인','남인','북인','소론'], a:2,
+   exp:'광해군 때는 북인이 집권했어요. 하지만 서인이 일으킨 인조반정으로 광해군이 쫓겨나면서 북인은 몰락했고, 이후 서인이 정권을 주도하고 남인 일부가 참여하는 구도가 만들어졌어요.'},
+]},
+{ id:'l2', title:'예송 논쟁', sub:'현종 · 상복을 둘러싼 논쟁', emoji:'🎎', c:'#6ec3f4', cd:'#3f9bd0', qs:[
+  {t:'mc', q:'서인과 남인이 왕실의 상복 입는 기간을 두고 두 차례 크게 논쟁한 <b>예송</b>은 어느 왕 때 일어났을까요?',
+   ch:['숙종','효종','현종','인조'], a:2,
+   exp:'예송은 현종 때 일어났어요. 1659년 효종이 세상을 떠났을 때(기해예송)와 1674년 효종의 왕비가 세상을 떠났을 때(갑인예송) 두 번이에요.'},
+  {t:'mc', q:'예송에서 "상복을 얼마 동안 입어야 하는가"가 문제가 된 사람은 누구였을까요?',
+   ch:['인조의 계비 자의대비(장렬왕후)','효종의 맏아들 현종','인조의 맏아들 소현세자','숙종의 왕비 인현왕후'], a:0,
+   exp:'효종과 효종비가 세상을 떠났을 때, 시어머니이자 어머니뻘인 자의대비(인조의 계비)가 상복을 얼마나 입을지가 쟁점이었어요.'},
+  {t:'tf', q:'예송이 일어난 배경에는 효종이 인조의 맏아들이 아니라 둘째 아들이었다는 점이 있었다.',
+   a:true, exp:'맞아요! 인조의 맏아들은 소현세자였고 효종(봉림대군)은 둘째였어요. 그래서 효종을 맏아들처럼 대우할지, 둘째 아들로 볼지가 상복 기간 논쟁으로 이어졌어요.'},
+  {t:'match', q:'짝을 맞춰 보세요!',
+   pairs:[['기해예송 (1659)','효종이 세상을 떠남'],['갑인예송 (1674)','효종비(인선왕후)가 세상을 떠남'],['서인의 입장','왕실도 사대부와 같은 예를 따른다'],['남인의 입장','왕실의 예는 사대부와 다르다']],
+   exp:'서인은 "천하의 예는 같다(천하동례)"며 왕실에도 일반 예법을 적용하자고 했고, 남인은 왕실의 특수성을 강조해 효종을 더 높게 대우해야 한다고 했어요.'},
+  {t:'blank', q:'빈칸을 채워 문장을 완성하세요.',
+   parts:['기해예송에서는 ','의 1년설이, 갑인예송에서는 ','의 1년설이 채택되었다.'],
+   bank:['서인','남인','북인','노론'], ans:['서인','남인'],
+   exp:'기해예송: 서인 1년(기년) vs 남인 3년 → 서인 승리. 갑인예송: 서인 9개월(대공) vs 남인 1년(기년) → 남인 승리. 두 번 모두 이긴 쪽의 주장이 "1년"이었다는 게 헷갈리기 쉬운 포인트예요!'},
+]},
+{ id:'l3', title:'숙종의 환국', sub:'붕당이 확 뒤바뀌다', emoji:'🌪️', c:'#ff9fb3', cd:'#e0738c', qs:[
+  {t:'mc', q:'숙종 때 자주 일어난 <b>환국(換局)</b>이란 무엇일까요?',
+   ch:['왕이 수도를 옮기는 일','집권 붕당이 급격하게 교체되는 일','외국과 국교를 맺는 일','과거 시험 제도를 바꾸는 일'], a:1,
+   exp:'환국은 국왕이 정국을 주도하며 집권 붕당을 한꺼번에 바꿔 버리는 것을 말해요. 숙종은 이를 통해 왕권을 강화했어요.'},
+  {t:'order', q:'일어난 순서대로 쌓아 보세요!',
+   items:['경신환국 — 남인이 쫓겨나고 서인 집권','기사환국 — 남인 집권, 송시열 사사','갑술환국 — 서인 재집권, 인현왕후 복위','신임옥사 — 경종 때 노론 4대신 처형'],
+   exp:'경신환국(1680) → 기사환국(1689) → 갑술환국(1694) → 신임옥사(경종, 1721~1722) 순서예요.'},
+  {t:'match', q:'짝을 맞춰 보세요!',
+   pairs:[['경신환국','허적·허견 사건으로 남인 몰락'],['기사환국','희빈 장씨 아들의 원자 책봉'],['갑술환국','인현왕후 복위, 서인 재집권']],
+   exp:'경신환국은 남인 허적의 유악(천막) 사용 문제와 서자 허견의 역모 고발로, 기사환국은 희빈 장씨가 낳은 아들(훗날 경종)의 원자 책봉 문제로, 갑술환국은 인현왕후 복위와 함께 일어났어요.'},
+  {t:'tf', q:'기사환국 때 서인의 송시열은 원자 책봉에 반대하다가 결국 사약을 받았다.',
+   a:true, exp:'맞아요. 송시열은 원자 책봉이 너무 이르다고 반대했다가 제주도로 유배된 뒤, 한양으로 압송되던 길에 정읍에서 사약을 받았어요(1689).'},
+  {t:'blank', q:'빈칸을 채워 문장을 완성하세요.',
+   parts:['서인은 남인 처벌 문제 등을 두고, 송시열을 중심으로 한 강경한 ','과 윤증을 중심으로 한 온건한 ','으로 나뉘었다.'],
+   bank:['노론','소론','북인','남인'], ans:['노론','소론'],
+   exp:'경신환국 뒤 남인을 얼마나 강하게 처벌할지를 두고 서인이 갈라졌어요. 송시열과 제자 윤증의 갈등(회니시비)도 분열을 키웠어요.'},
+  {t:'mc', q:'환국 시기 정치의 모습으로 <b>옳지 않은</b> 것은?',
+   ch:['한 붕당이 권력을 독차지하려는 경향이 커졌다','상대 붕당에 대한 보복과 처형이 잦아졌다','붕당이 서로 인정하며 견제와 공존을 하는 정치가 강화되었다','국왕이 집권 붕당 교체를 주도하며 왕권이 강해졌다'], a:2,
+   exp:'초기 붕당 정치는 서로 비판하고 견제하며 공존하는 모습이 있었어요. 하지만 환국 시기에는 한 붕당이 권력을 독점하려는 "일당 전제화" 경향이 나타나고 보복이 심해졌어요. 그래서 공존 강화는 틀린 설명이에요.'},
+]},
+{ id:'l4', title:'탕평과 그 이후', sub:'영조 · 정조 · 세도정치', emoji:'⚖️', c:'#ffc84a', cd:'#e0a521', qs:[
+  {t:'mc', q:'영조가 붕당의 폐해를 없애겠다는 뜻을 밝히며 <b>성균관 입구</b>에 세운 비석은?',
+   ch:['척화비','탕평비','순수비','광개토대왕릉비'], a:1,
+   exp:'영조는 1742년 성균관 입구에 탕평비를 세웠어요. 『논어』 구절을 인용해 "두루 사귀고 편 가르지 않는 것은 군자의 공정한 마음, 편 가르고 두루 사귀지 않는 것은 소인의 사사로운 뜻"이라고 새겼어요. (척화비는 흥선대원군이 세웠어요.)'},
+  {t:'tf', q:'"탕평"이라는 말은 『서경』의 "무편무당 왕도탕탕(無偏無黨 王道蕩蕩), 무당무편 왕도평평(無黨無偏 王道平平)"에서 나왔다.',
+   a:true, exp:'맞아요! 『서경』 홍범편에서 "치우침도 무리 지음도 없으면 왕도가 넓고 평평하다"는 구절에서 따온 말이에요.'},
+  {t:'mc', q:'다음 중 <b>영조</b>가 붕당의 기반을 약화하기 위해 한 일이 <b>아닌</b> 것은?',
+   ch:['이조전랑의 후임자 추천 관행 등 권한 축소','서원을 대폭 정리','탕평비 건립','규장각 설치'], a:3,
+   exp:'규장각은 정조가 설치한 왕실 도서관이자 정책 연구 기관이에요. 영조는 이조전랑의 권한을 줄이고, 붕당의 근거지가 된 서원을 대거 정리했어요.'},
+  {t:'match', q:'왕과 정치를 짝지어 보세요!',
+   pairs:[['숙종','환국'],['영조','완론탕평'],['정조','준론탕평'],['순조 ~ 철종','세도정치']],
+   exp:'영조는 붕당을 가리지 않고 온건한 인물을 고루 쓰는 완론탕평을, 정조는 옳고 그름(의리)을 분명히 가리면서 인재를 쓰는 준론탕평을 폈어요. 정조가 죽은 뒤에는 소수 가문이 권력을 독점하는 세도정치가 이어졌어요.'},
+  {t:'tf', q:'정조 때에는 사도세자의 죽음을 어떻게 보느냐에 따라 시파와 벽파가 갈리기도 했다.',
+   a:true, exp:'맞아요. 사도세자의 죽음(1762, 임오화변)을 동정하는 쪽을 시파, 정당했다고 보는 쪽을 벽파라고 불렀어요.'},
+  {t:'mc', q:'정조가 세상을 떠난 뒤, 안동 김씨·풍양 조씨처럼 왕실과 혼인한 소수 가문이 권력을 독점한 정치는?',
+   ch:['붕당정치','탕평정치','세도정치','훈구정치'], a:2,
+   exp:'순조·헌종·철종 3대 약 60년 동안 세도정치가 이어졌어요. 정치 기강이 무너지고 삼정(전정·군정·환곡)이 문란해지면서 백성의 삶이 매우 어려워졌어요.'},
+  {t:'order', q:'조선 후기 정치의 흐름을 순서대로 쌓아 보세요!',
+   items:['동서 분당 (선조)','예송 논쟁 (현종)','환국 (숙종)','탕평 정치 (영조 · 정조)','세도 정치 (순조 ~ 철종)'],
+   exp:'붕당의 형성 → 예송으로 대립 심화 → 환국으로 일당 전제화 → 탕평으로 붕당 완화 → 세도정치로 소수 가문 독점. 이 큰 흐름만 기억해도 붕당정치 완전 정복이에요! 🎉'},
+]}
+];
+
+/* ================== 저장 ================== */
+const store = {
+  load(){ try{ return JSON.parse(localStorage.getItem('bungdang-quiz')||'{}'); }catch(e){ return {}; } },
+  save(s){ try{ localStorage.setItem('bungdang-quiz', JSON.stringify(s)); }catch(e){} }
+};
+let save = Object.assign({done:{}, xp:0, best:{}}, store.load());
+
+/* ================== 효과음 ================== */
+let actx;
+function beep(ok){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const notes = ok ? [660,880] : [300,220];
+    notes.forEach((f,i)=>{
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.type = ok?'triangle':'square'; o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001, actx.currentTime+i*0.11);
+      g.gain.exponentialRampToValueAtTime(ok?0.18:0.07, actx.currentTime+i*0.11+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+i*0.11+0.16);
+      o.connect(g).connect(actx.destination); o.start(actx.currentTime+i*0.11); o.stop(actx.currentTime+i*0.11+0.18);
+    });
+  }catch(e){}
+}
+
+/* ================== 유틸 ================== */
+const $app = document.getElementById('app');
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const el = (html) => { const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstElementChild; };
+const cheers = ['훌륭해요!','정답이에요!','완벽해요!','역시 선비님!','대단해요!','척척박사!'];
+const oops = ['아쉬워요!','앗, 틀렸어요','괜찮아요, 다시 해봐요!'];
+const pick = a => a[Math.floor(Math.random()*a.length)];
+
+/* ================== 홈 ================== */
+function home(){
+  const doneCount = Object.keys(save.done).length;
+  const msg = doneCount===0 ? '안녕! 나는 꼬마 선비 붕이야. 붕당정치, 같이 정복해 볼까?' :
+              doneCount===LESSONS.length ? '와! 모든 단원을 다 깼어! 복습하면 더 오래 기억나 ✨' :
+              `벌써 ${doneCount}단원 완료! 다음 단원도 가 보자!`;
+  $app.innerHTML = `
+    <div class="top">
+      <div class="stat">📜 <span>${doneCount}/${LESSONS.length}</span></div>
+      <div class="stat" style="color:var(--gold-d)">⚡ <span>${save.xp} XP</span></div>
+    </div>
+    <div class="hero">
+      <div class="bounce">${mascot('happy',80)}</div>
+      <div>
+        <h1>조선 붕당정치<br>한 판 정리!</h1>
+        <p>${msg}</p>
+      </div>
+    </div>
+    <div class="path" id="path"></div>
+    <p class="note">고등학교 한국사 교과 내용을 기준으로 만들었어요.<br>틀린 문제는 단원 끝에 다시 나와요 · 하트 5개가 모두 사라지면 단원 재도전!</p>`;
+  const path = document.getElementById('path');
+  const offs = [0,-70,0,70];
+  LESSONS.forEach((L,i)=>{
+    if(i>0) path.appendChild(el('<div class="connector"></div>'));
+    const w = el(`<div class="node-wrap" style="transform:translateX(${offs[i%4]}px)">
+      <button class="node ${save.done[L.id]?'done':''}" style="--c:${L.c};--cd:${L.cd}" aria-label="${L.title} 시작">${L.emoji}</button>
+      <div class="node-label">${i+1}. ${L.title}<small>${L.sub} · ${L.qs.length}문제${save.best[L.id]!=null?` · 최고 ${save.best[L.id]}%`:''}</small></div>
+    </div>`);
+    w.querySelector('.node').onclick = ()=>startLesson(L);
+    path.appendChild(w);
+  });
+}
+
+/* ================== 레슨 ================== */
+let S; // lesson state
+function startLesson(L){
+  S = {L, queue:L.qs.map((q,i)=>({...q,_i:i})), solved:new Set(), firstTry:new Set(), tried:new Set(), hearts:5, xp:0, combo:0, maxCombo:0};
+  renderLessonShell(); nextQ();
+}
+function renderLessonShell(){
+  $app.innerHTML = `
+    <div class="lesson-top">
+      <button class="x" id="quit" aria-label="나가기">✕</button>
+      <div class="bar"><i id="bar"></i></div>
+      <div class="hearts">❤️ <span id="hearts">${S.hearts}</span></div>
+    </div>
+    <div class="qarea" id="qa"></div>
+    <div class="foot" id="foot"><div class="foot-in" id="footin"></div></div>`;
+  document.getElementById('quit').onclick = confirmQuit;
+  updateBar();
+}
+function updateBar(){
+  document.getElementById('bar').style.width = (S.solved.size/S.L.qs.length*100)+'%';
+  document.getElementById('hearts').textContent = S.hearts;
+}
+function confirmQuit(){
+  const m = el(`<div class="modal"><div class="sheet">
+    ${mascot('sad',80)}<h3>정말 그만둘 거예요?</h3><p>지금 나가면 이번 단원 진행 상황이 사라져요.</p>
+    <button class="btn" id="stay">계속 풀래요!</button>
+    <button class="btn ghost" id="leave">그만두기</button></div></div>`);
+  document.body.appendChild(m);
+  m.querySelector('#stay').onclick = ()=>m.remove();
+  m.querySelector('#leave').onclick = ()=>{ m.remove(); home(); };
+}
+
+let current, getAnswer, ready;
+function nextQ(){
+  if(S.queue.length===0) return finish(true);
+  current = S.queue.shift();
+  const qa = document.getElementById('qa');
+  qa.style.animation='none'; qa.offsetHeight; qa.style.animation='';
+  const labels = {mc:'🔎 알맞은 답을 고르세요', tf:'⭕ O / X 퀴즈', match:'🧩 짝 맞추기', order:'🪜 순서 맞추기', blank:'✏️ 빈칸 채우기'};
+  const retry = S.tried.has(current._i) ? ' · <span style="color:var(--red-d)">다시 도전!</span>' : '';
+  qa.innerHTML = `<div class="tag">${labels[current.t]}${retry}</div>
+    <div class="qhead"><div>${mascot('normal',72)}</div><div class="bubble">${current.q}</div></div>
+    <div id="body"></div>`;
+  const body = qa.querySelector('#body');
+  ready = false;
+  ({mc:renderMC, tf:renderTF, match:renderMatch, order:renderOrder, blank:renderBlank})[current.t](body);
+  footCheck();
+}
+function footCheck(){
+  const f = document.getElementById('foot'); f.className='foot';
+  document.getElementById('footin').innerHTML = `<button class="btn" id="check" ${ready?'':'disabled'}>확인하기</button>`;
+  document.getElementById('check').onclick = check;
+}
+function setReady(v){ ready=v; const b=document.getElementById('check'); if(b) b.disabled=!v; }
+
+/* --- 객관식 --- */
+function renderMC(body){
+  const order = shuffle(current.ch.map((c,i)=>i));
+  body.innerHTML = `<div class="choices">${order.map((ci,n)=>`<button class="choice" data-i="${ci}"><span class="k">${n+1}</span><span>${current.ch[ci]}</span></button>`).join('')}</div>`;
+  let sel=null;
+  body.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+    body.querySelectorAll('.choice').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel'); sel=+b.dataset.i; setReady(true);
+  });
+  getAnswer = ()=>{
+    const ok = sel===current.a;
+    body.querySelectorAll('.choice').forEach(x=>{ x.disabled=true;
+      if(+x.dataset.i===current.a) x.classList.add('right'); else if(+x.dataset.i===sel) x.classList.add('wrong'); });
+    return {ok, correct: current.ch[current.a]};
+  };
+}
+/* --- OX --- */
+function renderTF(body){
+  body.innerHTML = `<div class="choices tf">
+    <button class="choice" data-v="1"><span>⭕</span>맞아요</button>
+    <button class="choice" data-v="0"><span>❌</span>틀려요</button></div>`;
+  let sel=null;
+  body.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{
+    body.querySelectorAll('.choice').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel'); sel = b.dataset.v==='1'; setReady(true);
+  });
+  getAnswer = ()=>{
+    const ok = sel===current.a;
+    body.querySelectorAll('.choice').forEach(x=>{ x.disabled=true; const v=x.dataset.v==='1';
+      if(v===current.a) x.classList.add('right'); else if(v===sel) x.classList.add('wrong'); });
+    return {ok, correct: current.a?'⭕ 맞아요':'❌ 틀려요'};
+  };
+}
+/* --- 짝 맞추기 --- */
+function renderMatch(body){
+  const P = current.pairs;
+  const L = shuffle(P.map((p,i)=>i)), R = shuffle(P.map((p,i)=>i));
+  body.innerHTML = `<div class="match">
+    <div class="col">${L.map(i=>`<button class="mt" data-s="L" data-i="${i}">${P[i][0]}</button>`).join('')}</div>
+    <div class="col">${R.map(i=>`<button class="mt" data-s="R" data-i="${i}">${P[i][1]}</button>`).join('')}</div></div>`;
+  let selL=null, selR=null, matched=0, mistakes=0;
+  const tryPair = ()=>{
+    if(!selL||!selR) return;
+    const a=selL, b=selR; selL=selR=null;
+    if(a.dataset.i===b.dataset.i){
+      [a,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok');}); matched++; beep(true);
+      if(matched===P.length) setTimeout(()=>{ setReady(true); check(); }, 350);
+    } else {
+      mistakes++; beep(false);
+      [a,b].forEach(x=>{x.classList.remove('sel');x.classList.add('bad');setTimeout(()=>x.classList.remove('bad'),400);});
+    }
+  };
+  body.querySelectorAll('.mt').forEach(b=>b.onclick=()=>{
+    if(b.dataset.s==='L'){ body.querySelectorAll('[data-s=L]').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); selL=b; }
+    else { body.querySelectorAll('[data-s=R]').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); selR=b; }
+    tryPair();
+  });
+  getAnswer = ()=>({ok:true, note: mistakes? `실수 ${mistakes}번이 있었지만 모두 맞췄어요!` : '한 번도 안 틀리고 다 맞췄어요!'});
+}
+/* --- 순서 맞추기 --- */
+function renderOrder(body){
+  const items = current.items; let order;
+  do { order = shuffle(items.map((x,i)=>i)); } while(order.every((v,i)=>v===i));
+  body.innerHTML = `<div class="answer-line col" id="ans"></div>
+    <div class="bank" id="bank">${order.map(i=>`<button class="tile" data-i="${i}">${items[i]}</button>`).join('')}</div>`;
+  const ans = body.querySelector('#ans'); const picked=[];
+  const draw = ()=>{
+    ans.innerHTML = picked.map((i,n)=>`<button class="tile num" data-i="${i}"><b>${n+1}</b>${items[i]}</button>`).join('');
+    ans.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ if(!body.dataset.locked){ const i=+t.dataset.i; picked.splice(picked.indexOf(i),1); body.querySelector(`#bank [data-i="${i}"]`).classList.remove('used'); draw(); }});
+    setReady(picked.length===items.length);
+  };
+  body.querySelectorAll('#bank .tile').forEach(t=>t.onclick=()=>{ picked.push(+t.dataset.i); t.classList.add('used'); draw(); });
+  getAnswer = ()=>{
+    body.dataset.locked='1'; body.querySelectorAll('.tile').forEach(t=>t.disabled=true);
+    const ok = picked.every((v,i)=>v===i);
+    return {ok, correct: items.map((x,i)=>`${i+1}. ${x.split(' — ')[0]}`).join('  →  ')};
+  };
+}
+/* --- 빈칸 --- */
+function renderBlank(body){
+  const n = current.ans.length; const fill = Array(n).fill(null);
+  const bank = shuffle(current.bank.map((w,i)=>i));
+  let html=''; current.parts.forEach((p,i)=>{ html+=p; if(i<n) html+=`<span class="slot empty" data-s="${i}">　</span>`; });
+  body.innerHTML = `<div class="sentence">${html}</div>
+    <div class="bank">${bank.map(i=>`<button class="tile" data-w="${i}">${current.bank[i]}</button>`).join('')}</div>`;
+  const draw = ()=>{
+    body.querySelectorAll('.slot').forEach(s=>{ const v=fill[+s.dataset.s];
+      s.textContent = v==null?'　':current.bank[v]; s.classList.toggle('empty', v==null); });
+    setReady(fill.every(v=>v!=null));
+  };
+  body.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{
+    const k = fill.indexOf(null); if(k<0) return;
+    fill[k] = +t.dataset.w; t.classList.add('used'); draw();
+  });
+  body.querySelectorAll('.slot').forEach(s=>s.onclick=()=>{
+    if(body.dataset.locked) return;
+    const k=+s.dataset.s; if(fill[k]==null) return;
+    body.querySelector(`.tile[data-w="${fill[k]}"]`).classList.remove('used'); fill[k]=null; draw();
+  });
+  getAnswer = ()=>{
+    body.dataset.locked='1'; body.querySelectorAll('.tile').forEach(t=>t.disabled=true);
+    const ok = fill.every((v,i)=>current.bank[v]===current.ans[i]);
+    return {ok, correct: current.ans.join(', ')};
+  };
+}
+
+/* --- 채점 --- */
+function check(){
+  if(!ready) return;
+  const r = getAnswer();
+  const first = !S.tried.has(current._i);
+  S.tried.add(current._i);
+  if(r.ok){
+    S.solved.add(current._i); if(first) S.firstTry.add(current._i);
+    S.combo++; S.maxCombo=Math.max(S.maxCombo,S.combo);
+    S.xp += first ? 10 : 5;
+  } else {
+    S.combo=0; S.hearts--; S.queue.push(current);
+  }
+  if(current.t!=='match') beep(r.ok);
+  updateBar();
+  const f = document.getElementById('foot'); f.className = 'foot '+(r.ok?'good':'bad');
+  const comboTxt = r.ok && S.combo>=3 ? ` 🔥 ${S.combo}연속!` : '';
+  document.getElementById('footin').innerHTML = `
+    <div class="fb">
+      <div class="fb-icon">${mascot(r.ok?'happy':'sad',44)}</div>
+      <div>
+        <h3>${r.ok?pick(cheers)+comboTxt:pick(oops)}</h3>
+        ${!r.ok?`<div class="ans">정답: ${r.correct}</div>`:''}
+        ${r.note?`<div class="ans" style="color:var(--jade-d)">${r.note}</div>`:''}
+        <p>${current.exp}</p>
+      </div>
+    </div>
+    <button class="btn ${r.ok?'':'red'}" id="next">${S.hearts<=0?'결과 보기':'계속하기'}</button>`;
+  document.getElementById('next').onclick = ()=> S.hearts<=0 ? finish(false) : nextQ();
+}
+
+/* ================== 결과 ================== */
+function finish(win){
+  const L=S.L, total=L.qs.length;
+  const acc = Math.round(S.firstTry.size/total*100);
+  if(win){
+    save.done[L.id]=true; save.xp += S.xp + (S.hearts===5?5:0);
+    save.best[L.id] = Math.max(save.best[L.id]||0, acc); store.save(save);
+    confetti();
+  }
+  const perfect = win && S.hearts===5;
+  $app.innerHTML = `<div class="result ${win?'':'fail'}">
+    <div class="bounce">${mascot(win?(perfect?'wow':'happy'):'sad',130)}</div>
+    <h2>${win?(perfect?'완벽한 선비 등극! 🎓':'단원 완료! 🎉'):'하트가 다 떨어졌어요'}</h2>
+    <p style="margin:0;color:var(--muted)">${win?`「${L.title}」 단원을 정복했어요.${perfect?' 하트를 하나도 안 잃어서 보너스 +5 XP!':''}`:'괜찮아요! 해설을 떠올리며 한 번 더 도전해 봐요.'}</p>
+    <div class="cards">
+      <div class="rc" style="--c:var(--gold-d)"><div class="h">획득 XP</div><div class="v">⚡${win?S.xp+(perfect?5:0):0}</div></div>
+      <div class="rc" style="--c:var(--jade)"><div class="h">첫 시도 정답률</div><div class="v">🎯${acc}%</div></div>
+      <div class="rc" style="--c:#e0738c"><div class="h">최대 연속</div><div class="v">🔥${S.maxCombo}</div></div>
+    </div>
+    <div style="width:100%;display:grid;gap:12px;margin-top:10px">
+      ${win && LESSONS.indexOf(L)<LESSONS.length-1 ? `<button class="btn" id="nextL">다음 단원으로 →</button>`:''}
+      <button class="btn ${win?'ghost':''}" id="again">${win?'한 번 더 복습하기':'다시 도전!'}</button>
+      <button class="btn ghost" id="home">지도로 돌아가기</button>
+    </div></div>`;
+  const nl=document.getElementById('nextL'); if(nl) nl.onclick=()=>startLesson(LESSONS[LESSONS.indexOf(L)+1]);
+  document.getElementById('again').onclick=()=>startLesson(L);
+  document.getElementById('home').onclick=home;
+}
+function confetti(){
+  const cs=['#3fb37f','#ffc84a','#ff9fb3','#6ec3f4','#b69cf2'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div'); c.className='confetti';
+    c.style.left=Math.random()*100+'vw'; c.style.background=cs[i%cs.length];
+    c.style.animationDuration=(1.8+Math.random()*1.6)+'s'; c.style.animationDelay=(Math.random()*.6)+'s';
+    document.body.appendChild(c); setTimeout(()=>c.remove(),4200);
+  }
+}
+
+home();
+</script>
+</body>
+</html>
