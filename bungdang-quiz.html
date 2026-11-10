@@ -54,7 +54,6 @@ button{font-family:inherit;cursor:pointer;border:none}
 .bar{flex:1;height:16px;background:#ece3d6;border-radius:999px;overflow:hidden}
 .bar>i{display:block;height:100%;width:0;background:linear-gradient(var(--jade) 0 45%,#36a070 45%);
   border-radius:999px;transition:width .4s cubic-bezier(.3,1.4,.6,1)}
-.hearts{font-family:'Jua';font-size:19px;color:var(--red);display:flex;align-items:center;gap:4px}
 .qarea{flex:1;padding:8px 18px 190px;animation:slide .35s ease}
 @keyframes slide{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
 .tag{display:inline-flex;gap:6px;align-items:center;font-family:'Jua';color:var(--sky-d);font-size:15px;margin:6px 0}
@@ -346,7 +345,7 @@ function home(){
       </div>
     </div>
     <div class="path" id="path"></div>
-    <p class="note">고등학교 한국사 교과 내용을 기준으로 만들었어요.<br>틀린 문제는 단원 끝에 다시 나와요 · 하트 5개가 모두 사라지면 단원 재도전!</p>`;
+    <p class="note">고등학교 한국사 교과 내용을 기준으로 만들었어요.<br>틀린 문제는 단원 끝에 다시 나와요 · 끝까지 맞히면 단원 정복!</p>`;
   const path = document.getElementById('path');
   const offs = [0,-70,0,70];
   LESSONS.forEach((L,i)=>{
@@ -363,7 +362,7 @@ function home(){
 /* ================== 레슨 ================== */
 let S; // lesson state
 function startLesson(L){
-  S = {L, queue:L.qs.map((q,i)=>({...q,_i:i})), solved:new Set(), firstTry:new Set(), tried:new Set(), hearts:5, xp:0, combo:0, maxCombo:0};
+  S = {L, queue:L.qs.map((q,i)=>({...q,_i:i})), solved:new Set(), firstTry:new Set(), tried:new Set(), xp:0, combo:0, maxCombo:0};
   renderLessonShell(); nextQ();
 }
 function renderLessonShell(){
@@ -371,7 +370,6 @@ function renderLessonShell(){
     <div class="lesson-top">
       <button class="x" id="quit" aria-label="나가기">✕</button>
       <div class="bar"><i id="bar"></i></div>
-      <div class="hearts">❤️ <span id="hearts">${S.hearts}</span></div>
     </div>
     <div class="qarea" id="qa"></div>
     <div class="foot" id="foot"><div class="foot-in" id="footin"></div></div>`;
@@ -380,7 +378,6 @@ function renderLessonShell(){
 }
 function updateBar(){
   document.getElementById('bar').style.width = (S.solved.size/S.L.qs.length*100)+'%';
-  document.getElementById('hearts').textContent = S.hearts;
 }
 function confirmQuit(){
   const m = el(`<div class="modal"><div class="sheet">
@@ -532,7 +529,7 @@ function check(){
     S.combo++; S.maxCombo=Math.max(S.maxCombo,S.combo);
     S.xp += first ? 10 : 5;
   } else {
-    S.combo=0; S.hearts--; S.queue.push(current);
+    S.combo=0; S.queue.push(current);
   }
   if(current.t!=='match') beep(r.ok);
   if(r.ok) setTimeout(miumiu, 250);
@@ -549,24 +546,24 @@ function check(){
         <p>${current.exp}</p>
       </div>
     </div>
-    <button class="btn ${r.ok?'':'red'}" id="next">${S.hearts<=0?'결과 보기':'계속하기'}</button>`;
-  document.getElementById('next').onclick = ()=> S.hearts<=0 ? finish(false) : nextQ();
+    <button class="btn ${r.ok?'':'red'}" id="next">계속하기</button>`;
+  document.getElementById('next').onclick = nextQ;
 }
 
 /* ================== 결과 ================== */
 function finish(win){
   const L=S.L, total=L.qs.length;
   const acc = Math.round(S.firstTry.size/total*100);
+  const perfect = win && S.firstTry.size===total;
   if(win){
-    save.done[L.id]=true; save.xp += S.xp + (S.hearts===5?5:0);
+    save.done[L.id]=true; save.xp += S.xp + (perfect?5:0);
     save.best[L.id] = Math.max(save.best[L.id]||0, acc); store.save(save);
     confetti();
   }
-  const perfect = win && S.hearts===5;
   $app.innerHTML = `<div class="result ${win?'':'fail'}">
     <div class="bounce">${mascot(win?(perfect?'wow':'happy'):'sad',130)}</div>
     <h2>${win?(perfect?'완벽한 선비 등극! 🎓':'단원 완료! 🎉'):'하트가 다 떨어졌어요'}</h2>
-    <p style="margin:0;color:var(--muted)">${win?`「${L.title}」 단원을 정복했어요.${perfect?' 하트를 하나도 안 잃어서 보너스 +5 XP!':''}`:'괜찮아요! 해설을 떠올리며 한 번 더 도전해 봐요.'}</p>
+    <p style="margin:0;color:var(--muted)">${win?`「${L.title}」 단원을 정복했어요.${perfect?' 한 문제도 안 틀려서 보너스 +5 XP!':''}`:'괜찮아요! 해설을 떠올리며 한 번 더 도전해 봐요.'}</p>
     <div class="cards">
       <div class="rc" style="--c:var(--gold-d)"><div class="h">획득 XP</div><div class="v">⚡${win?S.xp+(perfect?5:0):0}</div></div>
       <div class="rc" style="--c:var(--jade)"><div class="h">첫 시도 정답률</div><div class="v">🎯${acc}%</div></div>
