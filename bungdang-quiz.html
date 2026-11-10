@@ -79,6 +79,11 @@ body{overscroll-behavior-y:none}
 .pc .back li{margin-bottom:5px}
 .pc .back .hint{font-size:11px;color:#b9aea6;text-align:center}
 .pc .flipmark{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.9);border-radius:10px;font-size:13px;padding:2px 7px;font-family:'Jua';color:var(--cd)}
+.pc .savebtn{position:absolute;top:8px;left:8px;z-index:2;background:rgba(255,255,255,.92);border-radius:10px;font-family:'Jua';
+  font-size:12px;color:var(--cd);padding:3px 8px;display:flex;align-items:center;gap:3px;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.pc .savebtn:active{transform:translateY(1px)}
+.savesheet img{width:100%;max-height:58vh;object-fit:contain;border-radius:16px;background:#fff8ec;margin-bottom:12px;-webkit-touch-callout:default}
+.savesheet .tip{font-size:13px;color:var(--muted);margin:0 0 14px}
 .legend{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 18px}
 .legend span{font-family:'Jua';font-size:13px;color:#fff;background:var(--c);border-radius:999px;padding:3px 10px}
 .course{margin:18px 18px 10px;background:#fff;border:2px solid var(--line);border-radius:28px;box-shadow:0 5px 0 var(--line);padding:18px 0 22px}
@@ -211,6 +216,7 @@ body{overscroll-behavior-y:none}
   .pc .nm{font-size:26px}.pc .party{font-size:15px}.pc .yr{font-size:14px}.pc .one{font-size:15px}
   .pc .back{padding:16px 16px 12px}.pc .back .nm{font-size:23px}.pc .back ul{font-size:15.5px;padding-left:20px}.pc .back .hint{font-size:13px}
   .legend span{font-size:15px;padding:4px 13px}
+  .pc .savebtn{font-size:14px;padding:4px 10px}
   .course{margin:18px 32px 10px;padding:24px 0 28px;border-radius:34px}
   .course-head{padding:0 28px}
   .course-head h2{font-size:26px}
@@ -440,6 +446,88 @@ function person(P, size){
     ${beard}${hat}
   </svg>`;
 }
+
+/* ---------- 인물카드를 이미지로 저장 ---------- */
+const svgImg = (svg, w, h) => new Promise((res, rej)=>{
+  const im = new Image();
+  im.onload = ()=>res(im); im.onerror = rej;
+  im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.replace('<svg ', `<svg xmlns="http://www.w3.org/2000/svg" `).replace(/width="[^"]*" height="[^"]*"/, `width="${w}" height="${h}"`));
+});
+function rrect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function wrapLines(ctx, text, maxW){
+  const out=[]; let line='';
+  for(const word of text.split(' ')){
+    const t = line ? line+' '+word : word;
+    if(ctx.measureText(t).width <= maxW){ line=t; continue; }
+    if(line) out.push(line);
+    line='';
+    for(const ch of word){ if(ctx.measureText(line+ch).width>maxW){ out.push(line); line=ch; } else line+=ch; }
+  }
+  if(line) out.push(line); return out;
+}
+async function cardCanvas(P){
+  try{ await document.fonts.ready; }catch(e){}
+  const col = PARTY[P.p], W=900, X=50, CW=800, INK='#3b3340', MUTED='#8a7f88';
+  const tmp=document.createElement('canvas').getContext('2d');
+  tmp.font = "36px 'Gowun Dodum', sans-serif";
+  const bullets = P.back.map(t=>wrapLines(tmp, t, CW-180));
+  const nLines = bullets.reduce((n,b)=>n+b.length,0);
+  const bTop = 1000, H = bTop + nLines*54 + bullets.length*16 + 160;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H; const ctx=cv.getContext('2d');
+  ctx.fillStyle='#fff8ec'; ctx.fillRect(0,0,W,H);
+  // 카드 몸통
+  rrect(ctx,X,50+16,CW,H-170,60); ctx.fillStyle=col.cd; ctx.fill();
+  rrect(ctx,X,50,CW,H-170,60); ctx.fillStyle='#fff'; ctx.fill();
+  // 그림 영역
+  ctx.save(); rrect(ctx,X,50,CW,H-170,60); ctx.clip();
+  ctx.fillStyle=col.c; ctx.fillRect(X,50,CW,520);
+  ctx.fillStyle='rgba(255,255,255,.25)';
+  for(let y=62;y<570;y+=30) for(let x=X+12;x<X+CW;x+=30){ ctx.beginPath(); ctx.arc(x,y,3.6,0,7); ctx.fill(); }
+  const av = await svgImg(person(P), 480, 480); ctx.drawImage(av, W/2-240, 570-480);
+  ctx.restore();
+  rrect(ctx,X,50,CW,H-170,60); ctx.lineWidth=10; ctx.strokeStyle=col.c; ctx.stroke();
+  // 글자
+  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.fillStyle=INK; ctx.font="92px 'Jua', sans-serif"; ctx.fillText(P.nm, W/2, 680);
+  const tag=P.tag||P.p; ctx.font="40px 'Jua', sans-serif"; const tw=ctx.measureText(tag).width+56;
+  rrect(ctx,W/2-tw/2,708,tw,64,32); ctx.fillStyle=col.cd; ctx.fill();
+  ctx.fillStyle='#fff'; ctx.fillText(tag, W/2, 754);
+  ctx.fillStyle=MUTED; ctx.font="34px 'Gowun Dodum', sans-serif"; ctx.fillText(P.yr, W/2, 826);
+  ctx.fillStyle=INK; ctx.font="42px 'Jua', sans-serif"; ctx.fillText(P.one, W/2, 892);
+  ctx.setLineDash([12,12]); ctx.strokeStyle='#eadfce'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(X+60,940); ctx.lineTo(X+CW-60,940); ctx.stroke(); ctx.setLineDash([]);
+  ctx.textAlign='left'; ctx.font="36px 'Gowun Dodum', sans-serif";
+  let y=bTop;
+  bullets.forEach(lines=>{
+    ctx.fillStyle=col.cd; ctx.beginPath(); ctx.arc(X+88, y-12, 8, 0, 7); ctx.fill();
+    ctx.fillStyle=INK; lines.forEach(l=>{ ctx.fillText(l, X+112, y); y+=54; }); y+=16;
+  });
+  // 바닥 서명
+  const dd = await svgImg(mascot('happy',72), 72, 72);
+  ctx.font="30px 'Jua', sans-serif"; const sig='두두와 함께하는 한국사 퀴즈'; const sw=ctx.measureText(sig).width;
+  const sx=W/2-(sw+84)/2; ctx.drawImage(dd, sx, H-84, 72, 72);
+  ctx.fillStyle=MUTED; ctx.textAlign='left'; ctx.fillText(sig, sx+84, H-36);
+  return cv;
+}
+async function saveCard(P){
+  let cv; try{ cv = await cardCanvas(P); }catch(e){ alert('이미지를 만들지 못했어요. 다시 시도해 주세요.'); return; }
+  const blob = await new Promise(r=>cv.toBlob(r,'image/png'));
+  const file = new File([blob], `${P.nm}_인물카드.png`, {type:'image/png'});
+  const url = URL.createObjectURL(blob);
+  const canShare = !!(navigator.canShare && navigator.canShare({files:[file]}));
+  const m = el(`<div class="modal"><div class="sheet savesheet">
+    <img src="${url}" alt="${P.nm} 인물카드">
+    <p class="tip">${canShare ? '아래 버튼을 누르고 <b>‘이미지 저장’</b>을 고르면 사진첩에 저장돼요.' : '이미지를 <b>길게 눌러</b> ‘사진 앱에 저장’을 고르거나, 아래 버튼으로 내려받아요.'}</p>
+    <button class="btn" id="doSave">📷 사진첩에 저장</button>
+    <button class="btn ghost" id="closeSave">닫기</button></div></div>`);
+  document.body.appendChild(m);
+  const close = ()=>{ m.remove(); URL.revokeObjectURL(url); };
+  m.querySelector('#closeSave').onclick = close;
+  m.onclick = (e)=>{ if(e.target===m) close(); };
+  m.querySelector('#doSave').onclick = async ()=>{
+    if(canShare){ try{ await navigator.share({files:[file], title:`${P.nm} 인물카드`}); return; }catch(e){ if(e.name==='AbortError') return; } }
+    const a=document.createElement('a'); a.href=url; a.download=file.name; document.body.appendChild(a); a.click(); a.remove();
+  };
+}
 function cards(){
   $app.innerHTML = `
     <div class="top">
@@ -460,6 +548,7 @@ function cards(){
       <div class="pc-in">
         <div class="side front">
           <span class="flipmark">↻</span>
+          <button class="savebtn" aria-label="${P.nm} 카드 사진첩에 저장">⤓ 저장</button>
           <div class="pic">${person(P)}</div>
           <div class="info"><div class="nm">${P.nm}</div><span class="party">${P.tag||P.p}</span>
             <div class="yr">${P.yr}</div><div class="one">${P.one}</div></div>
@@ -471,6 +560,7 @@ function cards(){
         </div>
       </div></div>`);
     c.onclick = ()=>c.classList.toggle('flip');
+    c.querySelector('.savebtn').onclick = (e)=>{ e.stopPropagation(); saveCard(P); };
     g.appendChild(c);
   });
 }
